@@ -1,0 +1,15 @@
+@startuml "Use Cases Client"
+    left to right direction
+    :Client: --> (Create account)
+    :Client: --> (Edit account)
+    :Client: --> (View account information)
+    :Client: --> (Search book)
+    :Client: --> (View book information)
+    :Client: --> (Search author)
+    :Client: --> (View author information)
+    :Client: --> (Borrow a book)
+    :Client: --> (Return a book)
+    :Client: --> (View borrowed books)
+    :Client: --> (View overdue books)
+    :Client: --> (Pay fine)
+@enduml

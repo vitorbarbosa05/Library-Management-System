@@ -1,0 +1,46 @@
+@startuml "Domain Model"
+    hide methods
+    hide circle
+
+    class Library{
+        name
+        address
+        openingHours
+        closingHours
+        rating
+    }
+    class Client{
+        address
+    }
+    class Librarian{
+    }
+    class Admin{
+    }
+    class User{
+        id
+        name 
+        email
+        password
+    }
+    class Book{
+        id
+        title
+        genre
+        isbn
+        availability
+    }
+    class Author{
+        id
+        name
+    }
+
+    Librarian --|> User 
+    Client --|> User
+    Admin --|> User
+    Library -- Client
+    Library -Left- Librarian
+    Library -Right- Admin
+    Library -Down- Author
+    Book -Up-* Author
+
+@enduml

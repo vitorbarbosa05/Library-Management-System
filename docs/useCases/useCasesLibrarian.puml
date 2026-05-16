@@ -1,0 +1,21 @@
+@startuml "Use Cases Librarian"
+    left to right direction
+    :Librarian: --> (Search client)
+    :Librarian: --> (Register client)
+    :Librarian: --> (Edit client)
+    :Librarian: --> (View client information)
+    :Librarian: --> (Search book)
+    :Librarian: --> (Register book)
+    :Librarian: --> (Edit book)
+    :Librarian: --> (Remove book)
+    :Librarian: --> (View book information)
+    :Librarian: --> (Search author)
+    :Librarian: --> (Register author)
+    :Librarian: --> (Edit author)
+    :Librarian: --> (Remove author)
+    :Librarian: --> (View author information)
+    :Librarian: --> (Lend a book to a client)
+    :Librarian: --> (Return a book from a client)
+    :Librarian: --> (View lent books)
+    :Librarian: --> (View overdue books)
+@enduml
