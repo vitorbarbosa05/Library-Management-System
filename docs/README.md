@@ -96,8 +96,7 @@ A tabela seguinte apresenta as tecnologias utilizadas no sistema:
 ### 3.1 Vista Lógica
 
 A vista lógica descreve a **estrutura funcional do sistema** e a forma como este se encontra organizado em diferentes
-níveis de abstração. Esta vista segue o **modelo C4**, permitindo apresentar a arquitetura de forma progressiva, desde
-uma visão global do sistema até à estrutura interna de um microserviço.
+níveis de abstração.
 
 ---
 
@@ -130,9 +129,8 @@ lógica, acessível através de uma API externa.
 ### 3.2 Vista de Implementação
 
 A vista de implementação descreve a **organização técnica do sistema** ao contrário da vista lógica, esta vista
-explicita
-**tecnologias**, **mecanismos de comunicação** e **dependências técnicas**, mantendo, no entanto, a separação clara de
-responsabilidades definida pela arquitetura.
+explicita **tecnologias**, **mecanismos de comunicação** e **dependências técnicas**, mantendo, no entanto, a separação
+clara de responsabilidades definida pela arquitetura.
 
 #### Nível 1 - Sistema
 
