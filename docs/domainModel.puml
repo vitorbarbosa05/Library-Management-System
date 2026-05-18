@@ -1,46 +1,198 @@
-@startuml "Domain Model"
-    hide methods
-    hide circle
+@startuml
 
-    class Library{
-        name
-        address
-        openingHours
-        closingHours
-        rating
-    }
-    class Client{
-        address
-    }
-    class Librarian{
-    }
-    class Admin{
-    }
-    class User{
-        id
-        name 
-        email
-        password
-    }
-    class Book{
-        id
-        title
-        genre
-        isbn
-        availability
-    }
-    class Author{
-        id
-        name
-    }
+skinparam classAttributeIconSize 0
+skinparam packageStyle rectangle
 
-    Librarian --|> User 
-    Client --|> User
-    Admin --|> User
-    Library -- Client
-    Library -Left- Librarian
-    Library -Right- Admin
-    Library -Down- Author
-    Book -Up-* Author
+package "«Aggregate» User" #E8E2FF {
+
+  class User <<Aggregate Root>> {
+    - id : Int
+    - publicId : UUID
+    - name : Name
+    - email : Email
+    - password : Password
+    - role : UserRole
+    - member : MembershipStatus
+  }
+
+  class Name <<Value Object>> {
+    - value : String
+    - regex : ^[A-Za-z ]+$
+  }
+
+  class Email <<Value Object>> {
+    - value : String
+    - regex : ^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}$
+  }
+
+  class Password <<Value Object>> {
+    - hashedValue : String
+  }
+
+  enum UserRole <<Value Object>> {
+    MEMBER
+    LIBRARIAN
+    ADMIN
+  }
+
+  enum MembershipStatus <<Value Object>> {
+    ACTIVE
+    EXPIRED
+    SUSPENDED
+  }
+
+  User *-- Name
+  User *-- Email
+  User *-- Password
+  User --> UserRole
+  User --> MembershipStatus
+}
+
+package "«Aggregate» Book" #FFE8D6 {
+
+  class Book <<Aggregate Root>> {
+    - id : Int
+    - publicId : UUID
+    - title : Title
+    - genre : GenreType
+    - isbn : ISBN
+  }
+
+  class BookCopy <<Entity>> {
+    - id : Int
+    - publicId : UUID
+    - bookId : Int
+    - condition : ConditionStatus
+    - availability : AvailabilityStatus
+  }
+
+  class Author <<Entity>> {
+    - id : Int
+    - publicId : UUID
+    - name : AuthorName
+    - biography : String
+  }
+
+  class Title <<Value Object>> {
+    - value : String
+    - regex : ^[A-Za-z0-9 ]+$
+  }
+
+  class ISBN <<Value Object>> {
+    - value : String
+    - regex : ^[A-Za-z0-9-]+$
+  }
+
+  class AuthorName <<Value Object>> {
+    - value : String
+    - regex : ^[A-Za-z ]+$
+  }
+
+  enum GenreType <<Value Object>> {
+    DRAMA
+    ROMANCE
+    HORROR
+    HISTORY
+    TECHNOLOGY
+    MYSTERY
+  }
+
+  enum AvailabilityStatus <<Value Object>> {
+    AVAILABLE
+    RESERVED
+    BORROWED
+    UNAVAILABLE
+  }
+
+  enum ConditionStatus <<Value Object>> {
+    NEW
+    GOOD
+    USED
+    DAMAGED
+    LOST
+  }
+
+  Book *-- Title
+  Book *-- ISBN
+  Book --> GenreType
+  Book *-- BookCopy
+  Book --> Author
+
+  BookCopy --> AvailabilityStatus
+  BookCopy --> ConditionStatus
+
+  Author *-- AuthorName
+}
+
+package "«Aggregate» Loan" #E3F2FD {
+
+  class Loan <<Aggregate Root>> {
+    - id : Int
+    - publicId : UUID
+    - bookCopyId : Int
+    - loanDate : Date
+    - dueDate : Date
+    - returnDate : Date
+    - maxRenewals : Int
+    - status : LoanStatus
+  }
+
+  class Reservation <<Entity>> {
+    - id : Int
+    - publicId : UUID
+    - reservationDate : Date
+    - expirationDate : Date
+    - renewalCount : Int
+    - status : ReservationStatus
+  }
+
+  class Fine <<Entity>> {
+    - id : Int
+    - publicId : UUID
+    - amount : Money
+    - reason : String
+    - status : FineStatus
+  }
+
+  class Money <<Value Object>> {
+    - amount : BigDecimal
+    - currency : String
+  }
+
+  enum LoanStatus <<Value Object>> {
+    ACTIVE
+    RETURNED
+    OVERDUE
+    CANCELLED
+  }
+
+  enum ReservationStatus <<Value Object>> {
+    PENDING
+    CONFIRMED
+    EXPIRED
+    CANCELLED
+  }
+
+  enum FineStatus <<Value Object>> {
+    PENDING
+    PAID
+    CANCELLED
+  }
+
+  Loan --> LoanStatus
+
+  Reservation --> ReservationStatus
+
+  Fine *-- Money
+  Fine --> FineStatus
+
+  Loan *-- Fine
+  Loan *-- Reservation
+}
+
+User --> Loan
+Loan --> BookCopy
+Reservation --> Book
+Fine --> Loan
 
 @enduml
