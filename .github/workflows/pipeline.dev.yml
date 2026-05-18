@@ -1,0 +1,32 @@
+name: Library Management System CI Pipeline for Development Environment
+
+on:
+  push:
+    branches-ignore:
+      - main
+      - docs
+
+jobs:
+  security:
+    name: Security Scan
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+
+      - name: Git Leaks Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+
+  backend:
+    name: LMS Backend
+    runs-on: ubuntu-latest
+    needs: [ security ]
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v6
