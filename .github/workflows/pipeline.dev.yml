@@ -36,6 +36,7 @@ jobs:
         with:
           node-version: '26.x'
           cache: 'npm'
+          cache-dependency-path: backend/package-lock.json
 
       - name: Install dependencies
         working-directory: backend
