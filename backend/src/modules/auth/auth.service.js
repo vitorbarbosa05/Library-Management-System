@@ -26,7 +26,7 @@ export async function register(name, email, password) {
     logger.info({emailHash}, "Register success");
 
     const token = jwt.sign(
-        {userId: user.id, email: user.email, role: user.role},
+        {userId: user.publicId, email: user.email, role: user.role},
         process.env.JWT_ACCESS_SECRET,
         {expiresIn: process.env.JWT_EXPIRES_IN || "1h"}
     );
@@ -50,7 +50,7 @@ export async function login(email, password) {
     logger.info({emailHash}, "Login success");
 
     const token = jwt.sign(
-        {userId: existingUser.id, email: existingUser.email, role: existingUser.role},
+        {userId: existingUser.publicId, email: existingUser.email, role: existingUser.role},
         process.env.JWT_ACCESS_SECRET,
         {expiresIn: process.env.JWT_EXPIRES_IN || "1h"}
     );
