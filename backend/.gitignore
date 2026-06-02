@@ -146,3 +146,4 @@ vite.config.ts.timestamp-*
 
 # Jetbrains IDE
 .idea
+/src/generated/prisma
