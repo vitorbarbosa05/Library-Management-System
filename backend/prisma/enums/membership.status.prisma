@@ -1,0 +1,5 @@
+enum MemberShipStatus {
+  ACTIVE
+  EXPIRED
+  SUSPENDED
+}
