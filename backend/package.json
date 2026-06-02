@@ -7,6 +7,7 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "test:coverage": "vitest run --coverage",
+    "postinstall": "prisma generate",
     "start": "node --watch src/server.js",
     "dev": "node --watch src/server.js"
   },
