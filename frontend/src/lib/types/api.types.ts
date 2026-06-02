@@ -1,10 +1,16 @@
-export type Page<T> = {
-    content: T[];
-    totalElements: number;
-    totalPages: number;
-    number: number;
-    size: number;
-    first: boolean;
-    last: boolean;
-    empty: boolean;
+export type Paginated<T> = {
+    data: T[];
+    total: number;
+    page: number;
+    pageSize: number;
+};
+
+export type PaginatedResponse<T> = {
+    data: T[];
+    meta: {
+        total: number;
+        page: number;
+        pageSize: number;
+        totalPages: number;
+    };
 };
