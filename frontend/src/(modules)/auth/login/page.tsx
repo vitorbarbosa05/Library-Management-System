@@ -1,4 +1,4 @@
-import ModuleWrapper from "../../../../components/shared/module-wrapper.tsx";
+import ModuleWrapper from "../../../components/shared/module-wrapper.tsx";
 
 const LoginPage = () => {
     return (
