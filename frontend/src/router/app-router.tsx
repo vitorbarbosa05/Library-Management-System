@@ -1,9 +1,11 @@
 import {Navigate, Route, Routes} from "react-router";
-import Page from "../page.tsx";
-import AuthLayout from "../(modules)/auth/layout.tsx";
-import LoginPage from "../(modules)/auth/login/page.tsx";
-import RegisterPage from "../(modules)/auth/register/page.tsx";
-import NotFound from "../not-found.tsx";
+
+import Page from "@/src/page.tsx";
+import NotFound from "@/src/not-found.tsx";
+
+import AuthLayout from "@/src/(modules)/auth/layout.tsx";
+import LoginPage from "@/src/(modules)/auth/login/page.tsx";
+import RegisterPage from "@/src/(modules)/auth/register/page.tsx";
 
 const AppRouter = () => {
     return (

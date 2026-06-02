@@ -1,4 +1,4 @@
-import ModuleWrapper from "./components/shared/module-wrapper.tsx";
+import ModuleWrapper from "@/src/components/shared/module-wrapper.tsx";
 
 const Page = () => {
     return (
