@@ -1,6 +1,10 @@
+import ModuleWrapper from "../components/shared/module-wrapper.tsx";
+
 const Page = () => {
     return (
-        <div>Page</div>
+        <ModuleWrapper>
+            Page
+        </ModuleWrapper>
     )
 }
 export default Page
