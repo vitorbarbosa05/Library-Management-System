@@ -1,10 +1,29 @@
-import axios, { type AxiosInstance } from "axios";
+import axios, {type AxiosInstance, type InternalAxiosRequestConfig} from "axios";
+import {clearStoredAuthToken, getStoredAuthToken} from "@/src/(modules)/auth/storage/auth.storage.ts";
 
-const apiClient: AxiosInstance = axios.create({
+const http: AxiosInstance = axios.create({
     baseURL: import.meta.env.VITE_API_BASE_URL,
     headers: {
         "Content-Type": "application/json",
     },
 });
 
-export default apiClient;
+http.interceptors.request.use((config: InternalAxiosRequestConfig) => {
+    const token = getStoredAuthToken();
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+    return config;
+});
+
+http.interceptors.response.use((response) =>
+    response, (error) => {
+        if (error.response?.status === 401) {
+            clearStoredAuthToken();
+            window.location.href = "/auth/login";
+        }
+        return Promise.reject(error);
+    }
+);
+
+export default http;
