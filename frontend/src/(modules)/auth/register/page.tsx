@@ -1,6 +1,10 @@
+import ModuleWrapper from "../../../../components/shared/module-wrapper.tsx";
+
 const RegisterPage = () => {
     return (
-        <div>RegisterPage</div>
+        <ModuleWrapper>
+            RegisterPage
+        </ModuleWrapper>
     )
 }
 export default RegisterPage
