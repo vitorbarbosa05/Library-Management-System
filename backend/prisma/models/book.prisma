@@ -1,0 +1,27 @@
+model Book {
+  id          Int       @id @default(autoincrement())
+  publicId    String    @unique @default(uuid()) @map("public_id") @db.Uuid
+  title       String    @db.VarChar(200)
+  genre       GenreType
+  publishDate DateTime
+  isbn        String    @unique
+  stock       Int       @default(0)
+
+  authors AuthorOnBook[]
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@map("books")
+}
+
+model AuthorOnBook {
+  bookId   Int @map("book_id")
+  authorId Int @map("author_id")
+
+  book   Book   @relation(fields: [bookId], references: [id])
+  author Author @relation(fields: [authorId], references: [id])
+
+  @@id([bookId, authorId])
+  @@map("author_on_book")
+}
