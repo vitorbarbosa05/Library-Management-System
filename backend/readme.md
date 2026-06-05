@@ -37,6 +37,14 @@ npm run dev
 
 * Aplicação disponível em: `http://localhost:3000`
 
+### 2.2 Seed (dados de exemplo)
+
+Depois de configurar a base de dados e correr as migrações, executa o seed:
+
+```bash
+npx prisma db seed
+```
+
 ---
 
 ## 3. Conexão à Base de Dados
