@@ -19,8 +19,8 @@ model AuthorOnBook {
   bookId   Int @map("book_id")
   authorId Int @map("author_id")
 
-  book   Book   @relation(fields: [bookId], references: [id])
-  author Author @relation(fields: [authorId], references: [id])
+  book   Book   @relation(fields: [bookId], references: [id], onDelete: Cascade)
+  author Author @relation(fields: [authorId], references: [id], onDelete: Cascade)
 
   @@id([bookId, authorId])
   @@map("author_on_book")
