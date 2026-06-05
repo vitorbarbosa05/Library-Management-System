@@ -4,7 +4,7 @@ import {AppError} from "../../shared/errors/AppError.js";
 import {toAuthorResponse} from "./dto/author.response.dto.js";
 
 export async function createAuthor({name, bio}) {
-    const existingAuthor = await prisma.author.findUnique({where: {name}});
+    const existingAuthor = await prisma.author.findFirst({where: {name}});
     if (existingAuthor) {
         logger.warn({name}, "Create blocked: Author already exists");
         throw new AppError("Author already exists", 409);
