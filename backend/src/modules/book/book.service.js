@@ -3,7 +3,7 @@ import {logger} from "../../shared/logger/logger.js";
 import {toBookResponse} from "./dto/book.response.dto.js";
 import {AppError} from "../../shared/errors/AppError.js";
 
-export async function create({title, genre, publishDate, isbn, stock, authorIds}) {
+export async function createBook({title, genre, publishDate, isbn, stock, authorIds}) {
     const existingISBN = await prisma.book.findUnique({where: {isbn}});
     if (existingISBN) {
         logger.warn({isbn}, "Create blocked: ISBN already exists");
@@ -41,7 +41,7 @@ export async function create({title, genre, publishDate, isbn, stock, authorIds}
     return toBookResponse(book);
 }
 
-export async function update(bookId, {title, genre, publishDate, isbn, stock, authorIds}) {
+export async function updateBook(bookId, {title, genre, publishDate, isbn, stock, authorIds}) {
     const existingBook = await prisma.book.findUnique({where: {publicId: bookId}});
     if (!existingBook) {
         logger.warn({bookId}, "Update blocked: Book not found");
@@ -78,7 +78,7 @@ export async function update(bookId, {title, genre, publishDate, isbn, stock, au
         data.authors = {
             deleteMany: {},
             create: validAuthors.map(author => ({
-                author: { connect: { id: author.id } }
+                author: {connect: {id: author.id}}
             }))
         };
     }
@@ -93,6 +93,18 @@ export async function update(bookId, {title, genre, publishDate, isbn, stock, au
     return toBookResponse(updatedBook);
 }
 
-export async function safeDelete(bookId) {
+export async function deleteBook(bookId) {
+    const existingBook = await prisma.book.findUnique({where: {publicId: bookId}});
+    if (!existingBook) {
+        logger.warn({bookId}, "Delete blocked: Book not found");
+        throw new AppError("Book not found", 404);
+    }
 
+    const deletedBook = await prisma.book.delete({
+        where: { publicId: bookId },
+        include: { authors: { include: { author: true } } }
+    });
+
+    logger.info({bookId: deletedBook.publicId, title: deletedBook.title}, "Book deleted");
+    return toBookResponse(deletedBook);
 }
