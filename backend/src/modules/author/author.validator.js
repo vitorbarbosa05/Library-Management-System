@@ -8,7 +8,7 @@ export const createAuthorValidtor = [
 
     body("bio")
         .trim()
-        .notEmpty().withMessage("Name is required")
+        .optional()
         .isLength({max: 200}).withMessage("Name too long"),
 ]
 
