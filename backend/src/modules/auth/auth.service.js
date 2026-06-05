@@ -12,7 +12,7 @@ const JWT_AUDIENCE = "library-api";
 const JWT_ALGORITHM = "HS256"
 
 function getJwtSecret() {
-    const secret = process.env.JWT_ACCESS_SECRET();
+    const secret = process.env.JWT_ACCESS_SECRET;
     if (!secret) {
         throw new AppError("JWT configuration error", 500);
     }
