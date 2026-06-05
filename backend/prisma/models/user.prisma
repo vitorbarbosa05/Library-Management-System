@@ -5,7 +5,7 @@ model User {
   name     String           @db.VarChar(50)
   password String           @db.VarChar(120)
   role     UserRole         @default(MEMBER)
-  member   MemberShipStatus @default(ACTIVE)
+  memberShipStatus   MemberShipStatus @default(ACTIVE)
 
   createdAt DateTime @default(now()) @map("created_at")
   updatedAt DateTime @updatedAt @map("updated_at")
