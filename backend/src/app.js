@@ -10,6 +10,7 @@ app.use(express.json());
 app.use('/api/v1/actuator', actuatorRouter);
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/book', bookRouter);
+app.use('/api/v1/author', authRouter);
 
 app.use(errorMiddleware);
 
