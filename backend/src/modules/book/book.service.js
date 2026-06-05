@@ -41,10 +41,10 @@ export async function create({title, genre, publishDate, isbn, stock, authorIds}
     return toBookResponse(book);
 }
 
-export async function update(bookId, title, genre, publishDate, isbn, stock, authorIds) {
-    const existingBook = await prisma.book.findUnique({where: {id: bookId}});
+export async function update(bookId, {title, genre, publishDate, isbn, stock, authorIds}) {
+    const existingBook = await prisma.book.findUnique({where: {publicId: bookId}});
     if (!existingBook) {
-        logger.warn({isbn}, "Update blocked: Book not found");
+        logger.warn({bookId}, "Update blocked: Book not found");
         throw new AppError("Book not found", 404);
     }
 
@@ -56,32 +56,37 @@ export async function update(bookId, title, genre, publishDate, isbn, stock, aut
         }
     }
 
-    const validAuthors = await prisma.author.findMany({
-        where: {publicId: {in: authorIds}},
-        select: {id: true}
-    });
-    if (validAuthors.length !== authorIds.length) {
-        logger.warn({authorIds}, "Update blocked: one or more authors not found");
-        throw new AppError("One or more authors not found", 404);
+    let validAuthors = null;
+    if (authorIds !== undefined) {
+        validAuthors = await prisma.author.findMany({
+            where: {publicId: {in: authorIds}},
+            select: {id: true}
+        });
+        if (validAuthors.length !== authorIds.length) {
+            logger.warn({authorIds}, "Update blocked: one or more authors not found");
+            throw new AppError("One or more authors not found", 404);
+        }
+    }
+
+    const data = {}
+    if (title !== undefined) data.title = title;
+    if (genre !== undefined) data.genre = genre;
+    if (publishDate !== undefined) data.publishDate = publishDate;
+    if (isbn !== undefined) data.isbn = isbn;
+    if (stock !== undefined) data.stock = stock;
+    if (validAuthors !== null) {
+        data.authors = {
+            deleteMany: {},
+            create: validAuthors.map(author => ({
+                author: { connect: { id: author.id } }
+            }))
+        };
     }
 
     const updatedBook = await prisma.book.update({
-        where: {id: bookId},
-        data: {
-            title,
-            genre,
-            publishDate,
-            isbn,
-            stock,
-            authors: {
-                create: validAuthors.map(author => ({
-                    author: {connect: {id: author.id}}
-                }))
-            }
-        },
-        include: {
-            authors: {include: {author: true}}
-        }
+        where: {publicId: bookId},
+        data,
+        include: {authors: {include: {author: true}}}
     });
 
     logger.info({bookId: updatedBook.publicId, title: updatedBook.title}, "Book updated");
