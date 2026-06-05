@@ -3,6 +3,11 @@ import {logger} from "../../shared/logger/logger.js";
 import {toBookResponse} from "./dto/book.response.dto.js";
 import {AppError} from "../../shared/errors/AppError.js";
 
+const DEFAULT_PAGE = 1;
+const DEFAULT_SIZE = 10;
+const MAX_SIZE = 100;
+const ALLOWED_SORT = ["id", "title", "genre", "isbn", "stock", "createdAt", "updatedAt"];
+
 export async function createBook({title, genre, publishDate, isbn, stock, authorIds}) {
     const existingISBN = await prisma.book.findUnique({where: {isbn}});
     if (existingISBN) {
@@ -101,10 +106,56 @@ export async function deleteBook(bookId) {
     }
 
     const deletedBook = await prisma.book.delete({
-        where: { publicId: bookId },
-        include: { authors: { include: { author: true } } }
+        where: {publicId: bookId},
+        include: {authors: {include: {author: true}}}
     });
 
     logger.info({bookId: deletedBook.publicId, title: deletedBook.title}, "Book deleted");
     return toBookResponse(deletedBook);
+}
+
+export async function getAllBooks({page, size, sort, order, search} = {}) {
+    const safePage = Math.max(Number(page) || DEFAULT_PAGE, 1);
+    const safeSize = Math.min(Math.max(Number(size) || DEFAULT_SIZE, 1), MAX_SIZE);
+    const safeSort = ALLOWED_SORT.includes(sort) ? sort : "title";
+    const safeOrder = order === "desc" ? "desc" : "asc";
+
+    const skip = (safePage - 1) * safeSize;
+
+    const where = search
+        ? {title: {contains: search, mode: "insensitive"}}
+        : {};
+
+    const [books, total] = await Promise.all([
+        prisma.book.findMany({
+            where,
+            skip,
+            take: safeSize,
+            orderBy: {[safeSort]: safeOrder},
+        }),
+        prisma.book.count({where}),
+    ]);
+
+    logger.info({count: books.length, page: safePage, total}, "Books listed");
+
+    return {
+        data: books.map(toBookResponse),
+        meta: {
+            page: safePage,
+            size: safeSize,
+            total,
+            totalPages: Math.ceil(total / safeSize),
+        },
+    };
+}
+
+export async function getBookByPublicId(publicId) {
+    const book = await prisma.book.findUnique({where: {publicId}});
+
+    if (!book) {
+        logger.warn({publicId}, "Read blocked: Book not found");
+        throw new AppError("Book not found", 404);
+    }
+
+    return toBookResponse(book);
 }

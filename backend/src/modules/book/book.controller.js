@@ -42,3 +42,35 @@ export const deleteBook = async (req, res, next) => {
         next(error);
     }
 };
+
+export const getAllBooks = async (req, res, next) => {
+    try {
+        const result = await bookService.getAllBooks({
+            page: req.query.page,
+            size: req.query.size,
+            sort: req.query.sort,
+            order: req.query.order,
+            search: req.query.search,
+        });
+        res.status(200).json({
+            message: "Books found successfully",
+            book: result,
+        });
+    } catch (error) {
+        next(error);
+    }
+};
+
+export const getBookByPublicId = async (req, res, next) => {
+    try {
+        const {id} = req.params;
+        const result = await bookService.getBookByPublicId(id);
+        res.status(200).json({
+            message: "Book by publicId list successfully",
+            book: result,
+        })
+
+    } catch (error) {
+        next(error);
+    }
+}

@@ -3,7 +3,7 @@ import {createAuthorValidtor, updateAuthorValidtor} from "./author.validator.js"
 import {validate} from "../../shared/middlewares/validation.middleware.js";
 import {authMiddleware} from "../../shared/middlewares/auth.middleware.js";
 import {requireRole} from "../../shared/middlewares/role.middleware.js";
-import {createAuthor, updateAuthor, deleteAuthor, getAllAuthors, getAuthorByPublicId} from "./author.controller.js";
+import {createAuthor, deleteAuthor, getAllAuthors, getAuthorByPublicId, updateAuthor} from "./author.controller.js";
 
 const authorRouter = Router();
 
@@ -31,13 +31,13 @@ authorRouter.delete("/:id",
 
 authorRouter.get("/",
     authMiddleware,
-    requireRole("ADMIN", "LIBRARIAN"),
+    requireRole("ADMIN", "LIBRARIAN", "MEMBER"),
     getAllAuthors
 );
 
 authorRouter.get("/:id",
     authMiddleware,
-    requireRole("ADMIN", "LIBRARIAN"),
+    requireRole("ADMIN", "LIBRARIAN", "MEMBER"),
     getAuthorByPublicId
 );
 
