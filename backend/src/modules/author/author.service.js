@@ -85,7 +85,7 @@ export async function deleteAuthor(authorId) {
 export async function getAllAuthors({page, size, sort, order, search} = {}) {
     const safePage = Math.max(Number(page) || DEFAULT_PAGE, 1);
     const safeSize = Math.min(Math.max(Number(size) || DEFAULT_SIZE, 1), MAX_SIZE);
-    const safeSort = ALLOWED_SORT.includes(sort) ? sort : "id";
+    const safeSort = ALLOWED_SORT.includes(sort) ? sort : "name";
     const safeOrder = order === "desc" ? "desc" : "asc";
 
     const skip = (safePage - 1) * safeSize;
