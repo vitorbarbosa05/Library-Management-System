@@ -48,6 +48,14 @@ export async function update(bookId, title, genre, publishDate, isbn, stock, aut
         throw new AppError("Book not found", 404);
     }
 
+    if (isbn && isbn !== existingBook.isbn) {
+        const isbnConflict = await prisma.book.findUnique({where: {isbn}});
+        if (isbnConflict) {
+            logger.warn({isbn}, "Update blocked: ISBN already in use by another book");
+            throw new AppError("ISBN already in use", 400);
+        }
+    }
+
     const validAuthors = await prisma.author.findMany({
         where: {publicId: {in: authorIds}},
         select: {id: true}
