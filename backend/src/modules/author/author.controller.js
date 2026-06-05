@@ -53,7 +53,7 @@ export const getAllAuthors = async (req, res, next) => {
         });
         res.status(200).json({
             message: "Authors found successfully",
-            authors: result,
+            author: result,
         });
     } catch (error) {
         next(error);
