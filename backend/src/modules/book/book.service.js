@@ -48,6 +48,15 @@ export async function update(bookId, title, genre, publishDate, isbn, stock, aut
         throw new AppError("Book not found", 404);
     }
 
+    const validAuthors = await prisma.author.findMany({
+        where: {publicId: {in: authorIds}},
+        select: {id: true}
+    });
+    if (validAuthors.length !== authorIds.length) {
+        logger.warn({authorIds}, "Update blocked: one or more authors not found");
+        throw new AppError("One or more authors not found", 404);
+    }
+
     const updatedBook = await prisma.book.update({
         where: {id: bookId},
         data: {
@@ -57,7 +66,7 @@ export async function update(bookId, title, genre, publishDate, isbn, stock, aut
             isbn,
             stock,
             authors: {
-                create: authors.map(author => ({
+                create: validAuthors.map(author => ({
                     author: {connect: {id: author.id}}
                 }))
             }
