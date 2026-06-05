@@ -7,9 +7,12 @@ import {hashEmail} from "../../shared/utils/crypto.utils.js";
 import {toAuthResponse} from "./dto/auth.response.dto.js";
 
 const SALT_ROUNDS = 12;
+const JWT_ISSUER = "library-backend";
+const JWT_AUDIENCE = "library-api";
+const JWT_ALGORITHM = "HS256"
 
 function getJwtSecret() {
-    const secret = process.env.JWT_ACCESS_SECRET();
+    const secret = process.env.JWT_ACCESS_SECRET;
     if (!secret) {
         throw new AppError("JWT configuration error", 500);
     }
@@ -18,11 +21,17 @@ function getJwtSecret() {
 
 function generateAccessToken(user) {
     return jwt.sign({
-            sub: user.publicId,
             role: user.role
         },
         getJwtSecret(),
-        {expiresIn: process.env.JWT_EXPIRES_IN}
+        {
+            subject: user.publicId,
+            issuer: JWT_ISSUER,
+            audience: JWT_AUDIENCE,
+            algorithm: JWT_ALGORITHM,
+            jwtid: crypto.randomUUID(),
+            expiresIn: process.env.JWT_EXPIRES_IN
+        }
     );
 }
 
@@ -52,6 +61,7 @@ export async function register(name, email, password) {
             logger.warn({emailHash}, "Register blocked: email already exists");
             throw new AppError("Email already exists", 409);
         }
+        throw error;
     }
 
     logger.info({emailHash}, "Register success");
