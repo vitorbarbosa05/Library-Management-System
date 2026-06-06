@@ -1,10 +1,10 @@
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken";
-import {logger} from "../../shared/logger/logger.js";
-import prisma from "../../../prisma/prisma.client.js";
-import {AppError} from "../../shared/errors/AppError.js";
-import {hashEmail} from "../../shared/utils/crypto.utils.js";
-import {toAuthResponse} from "./dto/auth.response.dto.js";
+import {logger} from "../../../shared/logger/logger.js";
+import prisma from "../../../../prisma/prisma.client.js";
+import {AppError} from "../../../shared/errors/AppError.js";
+import {hashEmail} from "../../../shared/utils/crypto.utils.js";
+import {toAuthResponse} from "../dto/auth.response.dto.js";
 
 const SALT_ROUNDS = 12;
 const JWT_ISSUER = "library-backend";

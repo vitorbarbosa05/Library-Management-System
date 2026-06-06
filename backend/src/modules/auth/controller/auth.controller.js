@@ -1,4 +1,4 @@
-import * as authService from "./auth.service.js";
+import * as authService from "../service/auth.service.js";
 
 export const register = async (req, res, next) => {
     const { name, email, password } = req.body;

@@ -1,9 +1,9 @@
 import express from "express";
 import actuatorRouter from "./actuator/index.js";
 import {errorMiddleware} from "./shared/errors/error.middleware.js";
-import authRouter from "./modules/auth/auth.routes.js";
-import bookRouter from "./modules/book/book.route.js";
-import authorRouter from "./modules/author/author.route.js";
+import authRouter from "./modules/auth/route/auth.routes.js";
+import bookRouter from "./modules/book/route/book.route.js";
+import authorRouter from "./modules/author/route/author.route.js";
 
 const app = express();
 

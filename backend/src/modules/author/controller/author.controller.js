@@ -1,6 +1,6 @@
-import * as authorService from "./author.service.js";
-import {toAuthorCreate} from "./dto/author.create.dto.js";
-import {toAuthorUpdate} from "./dto/author.update.dto.js";
+import * as authorService from "../service/author.service.js";
+import {toAuthorCreate} from "../dto/author.create.dto.js";
+import {toAuthorUpdate} from "../dto/author.update.dto.js";
 
 export const createAuthor = async (req, res, next) => {
     try {

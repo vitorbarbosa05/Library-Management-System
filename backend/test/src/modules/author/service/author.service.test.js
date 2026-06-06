@@ -1,6 +1,6 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
 import prisma from "../../../../../prisma/prisma.client.js";
-import * as authorService from "../../../../../src/modules/author/author.service.js";
+import * as authorService from "../../../../../src/modules/author/service/author.service.js";
 
 vi.mock("../../../../../prisma/prisma.client.js", () => ({
     default: {
