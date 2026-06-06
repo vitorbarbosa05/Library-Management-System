@@ -3,7 +3,7 @@ import {Navigate, Route, Routes} from "react-router";
 import Page from "@/src/page.tsx";
 import NotFound from "@/src/not-found.tsx";
 
-import AuthLayout from "@/src/(modules)/auth/layout.tsx";
+import AuthLayout from "@/src/(modules)/auth/ui/layout.tsx";
 import LoginPage from "@/src/(modules)/auth/ui/login/page.tsx";
 import RegisterPage from "@/src/(modules)/auth/ui/register/page.tsx";
 
