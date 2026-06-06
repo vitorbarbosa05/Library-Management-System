@@ -133,7 +133,13 @@ describe('GET /api/v1/author/', () => {
     });
 
     it("should fall back to default sort when sort is invalid", async () => {
+        prisma.author.findMany.mockResolvedValue([]);
+        prisma.author.count.mockResolvedValue(0);
 
+        await authorService.getAllAuthors({sort: "password"});
+
+        const findManyArg = prisma.author.findMany.mock.calls[0][0];
+        expect(findManyArg.orderBy).toEqual({name: "asc"});
     });
 });
 
