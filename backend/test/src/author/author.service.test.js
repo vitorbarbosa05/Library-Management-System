@@ -52,9 +52,8 @@ describe('POST /api/v1/author', () => {
     it("should throw 409 if author name already exists", async () => {
         prisma.author.findFirst.mockResolvedValue(fakeAuthor);
 
-        await expect(
-            authorService.createAuthor({name: "Haruki Murakami"})
-        ).rejects.toThrow("Author already exists");
+        await expect(authorService.createAuthor({name: "Haruki Murakami"}))
+            .rejects.toThrow("Author already exists");
 
         expect(prisma.author.create).not.toHaveBeenCalled();
     });
@@ -74,11 +73,22 @@ describe('PATCH /api/v1/author/:id', () => {
     });
 
     it("should only include provided fields in update data", async () => {
+        prisma.author.findUnique.mockResolvedValue(fakeAuthor);
+        prisma.author.update.mockResolvedValue(fakeAuthor);
 
+        await authorService.updateAuthor("uuid-123", {bio: "Only bio"});
+
+        const updateArg = prisma.author.update.mock.calls[0][0];
+        expect(updateArg.data).toEqual({bio: "Only bio"});
     });
 
     it("should throw 404 when author not found", async () => {
+        prisma.author.findUnique.mockResolvedValue(null);
 
+        await expect(authorService.updateAuthor("missing-value", {bio: "none"}))
+            .rejects.toThrow("Author not found");
+
+        expect(prisma.author.update).not.toHaveBeenCalled();
     });
 });
 
@@ -86,14 +96,25 @@ describe('DELETE /api/v1/author/:id', () => {
     beforeEach(() => vi.clearAllMocks());
 
     it("should delete a author", async () => {
+        prisma.author.findUnique.mockResolvedValue(fakeAuthor);
+        prisma.author.delete.mockResolvedValue(fakeAuthor);
+
+        const result = await authorService.deleteAuthor("uuid-123");
+
+        expect(prisma.author.delete).toHaveBeenCalledWith({
+            where: {publicId: "uuid-123"},
+            include: {books: {include: {book: true}}},
+        });
+        expect(result.id).toBe("uuid-123");
     })
 
-    it("should only include provided fields in update data", async () => {
-
-    });
-
     it("should throw 404 when author not found", async () => {
+        prisma.author.delete.mockResolvedValue(null);
 
+        await expect(authorService.deleteAuthor("missing-value"))
+            .rejects.toThrow("Author not found");
+
+        expect(prisma.author.delete).not.toHaveBeenCalled();
     });
 });
 
@@ -119,10 +140,23 @@ describe('GET /api/v1/author/', () => {
 describe('GET /api/v1/author/:id', () => {
     beforeEach(() => vi.clearAllMocks());
 
-    it("should return the author DTO when found", async () => {
+    it("should return the author", async () => {
+        prisma.author.findUnique.mockResolvedValue(fakeAuthor);
+
+        const result = await authorService.getAuthorByPublicId("uuid-123");
+
+        expect(prisma.author.findUnique).toHaveBeenCalledWith({
+            where: {publicId: "uuid-123"},
+        });
+        expect(result.id).toBe("uuid-123");
     })
 
     it("should throw 404 when author not found", async () => {
+        prisma.author.findUnique.mockResolvedValue(null);
 
+        await expect(authorService.deleteAuthor("missing-value"))
+            .rejects.toThrow("Author not found");
+
+        expect(prisma.author.delete).not.toHaveBeenCalled();
     });
 });
