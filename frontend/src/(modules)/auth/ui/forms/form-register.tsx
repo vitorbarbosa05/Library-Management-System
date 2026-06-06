@@ -7,11 +7,11 @@ import {Card, CardContent} from "@/src/components/ui/card";
 import {Field, FieldError, FieldGroup, FieldLabel,} from "@/src/components/ui/field";
 import {InputGroup, InputGroupAddon, InputGroupInput,} from "@/src/components/ui/input-group.tsx"
 import {useState} from "react";
-import {AuthApi} from "@/src/(modules)/auth/api/auth.api.ts";
 import {toast} from "sonner";
 import {Spinner} from "@/src/components/ui/spinner.tsx";
 import {Path} from "@/src/router/paths.ts";
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
+import {useAuth} from "@/src/(modules)/auth/context/auth.context";
 import InputRealTimeValidationDemo from "@/src/components/ui/input-password.tsx";
 import {ALargeSmallIcon, MailIcon} from "lucide-react";
 
@@ -36,6 +36,8 @@ const formSchema = z.object({
 
 const FormRegister = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const {register} = useAuth();
+    const navigate = useNavigate();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -51,14 +53,17 @@ const FormRegister = () => {
         setIsLoading(true);
 
         try {
-            await AuthApi.register(data);
-            await AuthApi.login({email: data.email, password: data.password});
+            await register(data);
 
             toast.success("Register successful");
 
             setTimeout(() => {
                 form.reset();
             }, 800);
+
+            navigate(Path.dashboard, {
+                replace: true,
+            });
 
         } catch (error) {
             const message = error instanceof Error ? error.message : "Error";
@@ -134,7 +139,7 @@ const FormRegister = () => {
                         <Controller
                             name="password"
                             control={form.control}
-                            render={({ field, fieldState }) => (
+                            render={({field, fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
                                     <InputRealTimeValidationDemo
                                         value={field.value}
@@ -146,7 +151,7 @@ const FormRegister = () => {
                                     />
 
                                     {fieldState.invalid && (
-                                        <FieldError errors={[fieldState.error]} />
+                                        <FieldError errors={[fieldState.error]}/>
                                     )}
                                 </Field>
                             )}

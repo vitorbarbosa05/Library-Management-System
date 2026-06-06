@@ -46,6 +46,8 @@ export type AuthContextValue = {
     user: AuthUser | null;
     token: string | null;
     isAuthenticated: boolean;
+    login: (payload: LoginPayload) => Promise<void>;
+    register: (payload: RegisterPayload) => Promise<void>;
     logout: () => Promise<void>;
 };
 
