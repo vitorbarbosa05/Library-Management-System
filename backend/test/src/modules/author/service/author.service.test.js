@@ -1,8 +1,8 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import prisma from "../../../../prisma/prisma.client.js";
-import * as authorService from "../../../../src/modules/author/author.service.js";
+import prisma from "../../../../../prisma/prisma.client.js";
+import * as authorService from "../../../../../src/modules/author/author.service.js";
 
-vi.mock("../../../../prisma/prisma.client.js", () => ({
+vi.mock("../../../../../prisma/prisma.client.js", () => ({
     default: {
         author: {
             findFirst: vi.fn(),
@@ -16,7 +16,7 @@ vi.mock("../../../../prisma/prisma.client.js", () => ({
     },
 }));
 
-vi.mock("../../../../src/shared/logger/logger.js", () => ({
+vi.mock("../../../../../src/shared/logger/logger.js", () => ({
     logger: {info: vi.fn(), warn: vi.fn(), error: vi.fn()},
 }));
 
