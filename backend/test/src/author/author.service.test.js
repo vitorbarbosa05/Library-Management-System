@@ -129,7 +129,12 @@ describe('GET /api/v1/author/', () => {
     });
 
     it("should clamp size to MAX_SIZE", async () => {
+        prisma.author.findMany.mockResolvedValue([]);
+        prisma.author.count.mockResolvedValue(0);
 
+        const result = await authorService.getAllAuthors({size: 9999});
+
+        expect(result.meta.size).toBe(100);
     });
 
     it("should fall back to default sort when sort is invalid", async () => {
