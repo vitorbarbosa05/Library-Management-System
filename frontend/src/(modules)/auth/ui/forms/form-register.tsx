@@ -10,6 +10,8 @@ import {useState} from "react";
 import {AuthApi} from "@/src/(modules)/auth/api/auth.api.ts";
 import {toast} from "sonner";
 import {Spinner} from "@/src/components/ui/spinner.tsx";
+import {Path} from "@/src/router/paths.ts";
+import {Link} from "react-router";
 
 
 const formSchema = z.object({
@@ -80,7 +82,7 @@ const FormRegister = () => {
                                         {...field}
                                         id="form-register-name"
                                         aria-invalid={fieldState.invalid}
-                                        placeholder="Login button not working on mobile"
+                                        placeholder="e.g., Library"
                                         autoComplete="off"
                                         type="text"
                                     />
@@ -102,7 +104,7 @@ const FormRegister = () => {
                                         {...field}
                                         id="form-register-email"
                                         aria-invalid={fieldState.invalid}
-                                        placeholder="librarian@example.com"
+                                        placeholder="e.g., librarian@example.com"
                                         autoComplete="off"
                                         type="email"
                                     />
@@ -134,18 +136,33 @@ const FormRegister = () => {
                                 </Field>
                             )}
                         />
-                    </FieldGroup>
+                        <div className="flex flex-col space-y-3">
+                            <Button type="submit" className="mt-4 w-full" form="form-register" disabled={isLoading}>
+                                {isLoading ?
+                                    <div className='text-muted-foreground flex items-center gap-2 text-sm'>
+                                        <Spinner className='size-4'/>
+                                        Validating...
+                                    </div>
+                                    :
+                                    <p>Sign Up</p>
+                                }
+                            </Button>
 
-                    <Button type="submit" className="mt-4 w-full" form="form-register" disabled={isLoading}>
-                        {isLoading ?
-                            <div className='text-muted-foreground flex items-center gap-2 text-sm'>
-                                <Spinner className='size-4'/>
-                                Validating...
+                            <div className="text-xs text-center">
+                                <p className="inline-block mr-2 text-muted-foreground">
+                                    Already have an account?
+                                </p>
+                                <Link
+                                    to={Path.login}
+                                    className="group underline align-baseline"
+                                >
+                                    <p className="relative inline-block text-foreground transition-all duration-500 after:absolute after:left-0 after:bottom-0 after:h-[2px] after:w-0 after:bg-foreground after:transition-all after:duration-500 group-hover:after:w-full">
+                                        Sign In
+                                    </p>
+                                </Link>
                             </div>
-                            :
-                            <p>Sign Up</p>
-                        }
-                    </Button>
+                        </div>
+                    </FieldGroup>
                 </form>
             </CardContent>
         </Card>
