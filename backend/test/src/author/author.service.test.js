@@ -1,4 +1,6 @@
-import {describe, it, expect, vi, beforeEach} from "vitest";
+import {beforeEach, describe, expect, it, vi} from "vitest";
+import prisma from "../../../prisma/prisma.client.js";
+import * as authorService from "../../../src/modules/author/author.service.js";
 
 vi.mock("../../../prisma/prisma.client.js", () => ({
     default: {
@@ -17,9 +19,6 @@ vi.mock("../../../prisma/prisma.client.js", () => ({
 vi.mock("../../../src/shared/logger/logger.js", () => ({
     logger: {info: vi.fn(), warn: vi.fn(), error: vi.fn()},
 }));
-
-import prisma from "../../../prisma/prisma.client.js";
-import * as authorService from "../../../src/modules/author/author.service.js";
 
 const fakeAuthor = {
     id: 1,
@@ -64,9 +63,15 @@ describe('POST /api/v1/author', () => {
 describe('PATCH /api/v1/author/:id', () => {
     beforeEach(() => vi.clearAllMocks());
 
-    it("should update a author", async () => {
+    it("should update and return the DTO", async () => {
+        prisma.author.findUnique.mockResolvedValue(fakeAuthor);
+        prisma.author.update.mockResolvedValue({...fakeAuthor, bio: "Updated bio"});
 
-    })
+        const result = await authorService.updateAuthor("uuid-123", {bio: "Updated bio"});
+
+        expect(prisma.author.update).toHaveBeenCalledOnce();
+        expect(result.bio).toBe("Updated bio");
+    });
 
     it("should only include provided fields in update data", async () => {
 
