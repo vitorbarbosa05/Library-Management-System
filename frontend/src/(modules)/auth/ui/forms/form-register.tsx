@@ -50,6 +50,7 @@ const FormRegister = () => {
 
         try {
             await AuthApi.register(data);
+            await AuthApi.login({email: data.email, password: data.password});
 
             toast.success("Register successful");
 
@@ -153,7 +154,7 @@ const FormRegister = () => {
                             </Button>
 
                             <div className="text-xs text-center">
-                                <p className="inline-block mr-2 text-muted-foreground">
+                                <p className="inline-block mr-1.5 text-muted-foreground">
                                     Already have an account?
                                 </p>
                                 <Link
