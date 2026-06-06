@@ -23,7 +23,8 @@ const formSchema = z.object({
         .string()
         .nonempty("Password is required")
         .min(8, "Password must be at least 8 characters.")
-    // at least one upper case
+        .regex(/\d/, "Password must contain at least one number.")
+        .regex(/[A-Z]/, "Password must contain at least one uppercase letter."),
 });
 
 const FormLogin = () => {

@@ -1,19 +1,27 @@
-"use client";
-
 import { CheckCircle2, EyeClosed, X, Eye } from "lucide-react";
-import { useState } from "react";
+import { forwardRef, useState } from "react";
 import { Input } from "@/src/components/ui/input.tsx";
 import { Label } from "@/src/components/ui/label.tsx";
 import { Button } from "@/src/components/ui/button.tsx";
 
-const InputRealTimeValidationDemo = () => {
-  const [password, setPassword] = useState("");
+type InputRealTimeValidationDemoProps = {
+  value?: string;
+  onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void;
+  onBlur?: () => void;
+  name?: string;
+  error?: boolean;
+};
+
+const InputRealTimeValidationDemo = forwardRef<
+    HTMLInputElement,
+    InputRealTimeValidationDemoProps
+>(({ value = "", onChange, onBlur, name, error }, ref) => {
   const [showPassword, setShowPassword] = useState(false);
 
   const validations = [
-    { text: "At least 8 characters", valid: password.length >= 8 },
-    { text: "Contains a number", valid: /\d/.test(password) },
-    { text: "Contains uppercase letter", valid: /[A-Z]/.test(password) },
+    { text: "At least 8 characters", valid: value.length >= 8 },
+    { text: "Contains a number", valid: /\d/.test(value) },
+    { text: "Contains uppercase letter", valid: /[A-Z]/.test(value) },
   ];
 
   const strength = validations.filter((v) => v.valid).length;
@@ -40,75 +48,86 @@ const InputRealTimeValidationDemo = () => {
   };
 
   return (
-    <div className="w-full max-w-sm space-y-4">
-      <div className="space-y-2">
-        <Label htmlFor="password-realtime" className="gap-1">
-          Password
-          <span className='text-destructive'>*</span>
-        </Label>
-        <div className="relative">
-          <Input
-            className="bg-transparent"
-            id="password-realtime"
-            onChange={(e) => setPassword(e.target.value)}
-            placeholder="********"
-            type={showPassword ? "text" : "password"}
-            value={password}
-          />
-          <Button
-            className="absolute top-0 right-0 h-full px-3 hover:bg-transparent cursor-pointer"
-            onClick={() => setShowPassword(!showPassword)}
-            size="icon"
-            type="button"
-            variant="ghost"
-          >
-            {showPassword ? (
-              <Eye className="h-4 w-4 text-muted-foreground" />
-            ) : (
-              <EyeClosed className="h-4 w-4 text-muted-foreground" />
-            )}
-          </Button>
-        </div>
-      </div>
+      <div className="w-full max-w-sm space-y-4">
+        <div className="space-y-2">
+          <Label htmlFor="password-realtime" className="gap-1">
+            Password
+            <span className="text-destructive">*</span>
+          </Label>
 
-      <div className="space-y-2">
-        <div className="h-1 w-full overflow-hidden rounded-full bg-secondary">
-          <div
-            className={`h-full transition-all duration-500 ease-out ${getStrengthColor(
-              strength
-            )}`}
-            style={{ width: `${(strength / 3) * 100}%` }}
-          />
+          <div className="relative">
+            <Input
+                ref={ref}
+                name={name}
+                className="bg-transparent"
+                id="password-realtime"
+                onChange={onChange}
+                onBlur={onBlur}
+                placeholder="********"
+                type={showPassword ? "text" : "password"}
+                value={value}
+                aria-invalid={error}
+                autoComplete="new-password"
+            />
+
+            <Button
+                className="absolute top-0 right-0 h-full px-3 hover:bg-transparent cursor-pointer"
+                onClick={() => setShowPassword((prev) => !prev)}
+                size="icon"
+                type="button"
+                variant="ghost"
+            >
+              {showPassword ? (
+                  <Eye className="h-4 w-4 text-muted-foreground" />
+              ) : (
+                  <EyeClosed className="h-4 w-4 text-muted-foreground" />
+              )}
+            </Button>
+          </div>
         </div>
-        <div className="flex items-center justify-between text-xs font-medium">
-          <span className="text-muted-foreground">Password must contain</span>
-          <span className={getStrengthTextColor(strength)}>
+
+        <div className="space-y-2">
+          <div className="h-1 w-full overflow-hidden rounded-full bg-secondary">
+            <div
+                className={`h-full transition-all duration-500 ease-out ${getStrengthColor(
+                    strength
+                )}`}
+                style={{ width: `${(strength / 3) * 100}%` }}
+            />
+          </div>
+
+          <div className="flex items-center justify-between text-xs font-medium">
+            <span className="text-muted-foreground">Password must contain</span>
+            <span className={getStrengthTextColor(strength)}>
             {getStrengthText(strength)}
           </span>
+          </div>
+        </div>
+
+        <div className="space-y-1.5 pt-1">
+          {validations.map((validation, index) => (
+              <div
+                  className={`flex items-center gap-2 text-sm transition-colors duration-200 ${
+                      validation.valid
+                          ? "text-teal-400 dark:text-teal-400"
+                          : "text-muted-foreground"
+                  }`}
+                  key={index}
+              >
+                {validation.valid ? (
+                    <CheckCircle2 className="h-3.5 w-3.5" />
+                ) : (
+                    <X className="h-3.5 w-3.5" />
+                )}
+
+                <span className="text-[13px]">{validation.text}</span>
+              </div>
+          ))}
         </div>
       </div>
-
-      <div className="space-y-1.5 pt-1">
-        {validations.map((validation, index) => (
-          <div
-            className={`flex items-center gap-2 text-sm transition-colors duration-200 ${
-              validation.valid
-                ? "text-teal-400 dark:text-teal-400"
-                : "text-muted-foreground"
-            }`}
-            key={index}
-          >
-            {validation.valid ? (
-              <CheckCircle2 className="h-3.5 w-3.5" />
-            ) : (
-              <X className="h-3.5 w-3.5" />
-            )}
-            <span className="text-[13px]">{validation.text}</span>
-          </div>
-        ))}
-      </div>
-    </div>
   );
-};
+});
+
+InputRealTimeValidationDemo.displayName = "InputRealTimeValidationDemo";
 
 export default InputRealTimeValidationDemo;

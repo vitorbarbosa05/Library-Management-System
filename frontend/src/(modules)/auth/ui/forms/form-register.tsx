@@ -30,6 +30,8 @@ const formSchema = z.object({
         .string()
         .nonempty("Password is required")
         .min(8, "Password must be at least 8 characters.")
+        .regex(/\d/, "Password must contain at least one number.")
+        .regex(/[A-Z]/, "Password must contain at least one uppercase letter."),
 })
 
 const FormRegister = () => {
@@ -132,11 +134,19 @@ const FormRegister = () => {
                         <Controller
                             name="password"
                             control={form.control}
-                            render={({fieldState}) => (
+                            render={({ field, fieldState }) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <InputRealTimeValidationDemo/>
+                                    <InputRealTimeValidationDemo
+                                        value={field.value}
+                                        onChange={field.onChange}
+                                        onBlur={field.onBlur}
+                                        name={field.name}
+                                        ref={field.ref}
+                                        error={fieldState.invalid}
+                                    />
+
                                     {fieldState.invalid && (
-                                        <FieldError errors={[fieldState.error]}/>
+                                        <FieldError errors={[fieldState.error]} />
                                     )}
                                 </Field>
                             )}
