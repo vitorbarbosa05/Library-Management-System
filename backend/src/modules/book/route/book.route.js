@@ -1,9 +1,9 @@
 import {Router} from "express";
-import {createBookValidator, updateBookValidator} from "./book.validator.js";
-import {validate} from "../../shared/middlewares/validation.middleware.js";
-import {authMiddleware} from "../../shared/middlewares/auth.middleware.js";
-import {requireRole} from "../../shared/middlewares/role.middleware.js";
-import {createBook, updateBook, deleteBook, getAllBooks, getBookByPublicId} from "./book.controller.js";
+import {createBookValidator, updateBookValidator} from "../validator/book.validator.js";
+import {validate} from "../../../shared/middlewares/validation.middleware.js";
+import {authMiddleware} from "../../../shared/middlewares/auth.middleware.js";
+import {requireRole} from "../../../shared/middlewares/role.middleware.js";
+import {createBook, updateBook, deleteBook, getAllBooks, getBookByPublicId} from "../controller/book.controller.js";
 
 const bookRouter = Router();
 

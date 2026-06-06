@@ -1,6 +1,6 @@
-import * as bookService from "./book.service.js";
-import {toBookCreate} from "./dto/book.create.dto.js";
-import {toBookUpdate} from "./dto/book.update.dto.js";
+import * as bookService from "../service/book.service.js";
+import {toBookCreate} from "../dto/book.create.dto.js";
+import {toBookUpdate} from "../dto/book.update.dto.js";
 
 export const createBook = async (req, res, next) => {
     try {

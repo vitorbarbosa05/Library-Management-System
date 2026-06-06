@@ -1,8 +1,8 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import * as authorService from "../../../../../src/modules/author/author.service.js";
-import * as authorController from "../../../../../src/modules/author/author.controller.js";
+import * as authorService from "../../../../../src/modules/author/service/author.service.js";
+import * as authorController from "../../../../../src/modules/author/controller/author.controller.js";
 
-vi.mock("../../../../../src/modules/author/author.service.js", () => ({
+vi.mock("../../../../../src/modules/author/service/author.service.js", () => ({
     createAuthor: vi.fn(),
     updateAuthor: vi.fn(),
     deleteAuthor: vi.fn(),

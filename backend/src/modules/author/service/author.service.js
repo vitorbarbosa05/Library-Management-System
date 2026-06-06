@@ -1,7 +1,7 @@
-import prisma from "../../../prisma/prisma.client.js";
-import {logger} from "../../shared/logger/logger.js";
-import {AppError} from "../../shared/errors/AppError.js";
-import {toAuthorResponse} from "./dto/author.response.dto.js";
+import prisma from "../../../../prisma/prisma.client.js";
+import {logger} from "../../../shared/logger/logger.js";
+import {AppError} from "../../../shared/errors/AppError.js";
+import {toAuthorResponse} from "../dto/author.response.dto.js";
 
 const DEFAULT_PAGE = 1;
 const DEFAULT_SIZE = 10;
