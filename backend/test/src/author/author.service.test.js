@@ -122,7 +122,19 @@ describe('GET /api/v1/author/', () => {
     beforeEach(() => vi.clearAllMocks());
 
     it("should return paginated data with meta", async () => {
-    })
+        prisma.author.findMany.mockResolvedValue([fakeAuthor]);
+        prisma.author.count.mockResolvedValue(1);
+
+        const result = await authorService.getAllAuthors({page: 1, size: 10});
+
+        expect(result.data).toHaveLength(1);
+        expect(result.meta).toEqual({
+            page: 1,
+            size: 10,
+            total: 1,
+            totalPages: 1
+        });
+    });
 
     it("should apply search filter when provided", async () => {
         prisma.author.findMany.mockResolvedValue([]);
