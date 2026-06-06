@@ -1,6 +1,7 @@
 import type {UUID} from "@/src/lib/types/uuid.types.ts";
 
 export type Role = "MEMBER" | "LIBRARIAN" | "ADMIN";
+export type MemberShipStatus = "ACTIVE" | "EXPIRED" | "SUSPENDED";
 
 export type AuthStatus =
     | "idle"
@@ -13,6 +14,7 @@ export type AuthUser = {
     name: string;
     email: string;
     role: Role;
+    memberShipStatus: MemberShipStatus;
 };
 
 export type AuthToken = {
