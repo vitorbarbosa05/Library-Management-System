@@ -6,6 +6,9 @@ import NotFound from "@/src/not-found.tsx";
 import AuthLayout from "@/src/(modules)/auth/ui/layout.tsx";
 import LoginPage from "@/src/(modules)/auth/ui/login/page.tsx";
 import RegisterPage from "@/src/(modules)/auth/ui/register/page.tsx";
+import PrivacyPolicyPage from "@/src/(default)/privacy/ui/page.tsx";
+import TermsOfServicePage from "@/src/(default)/terms/ui/page.tsx";
+import {Path} from "@/src/router/paths.ts";
 
 const AppRouter = () => {
     return (
@@ -13,6 +16,8 @@ const AppRouter = () => {
             <Route path="*" element={<NotFound/>}/>
 
             <Route path="/" element={<Page/>}/>
+            <Route path={Path.privacyPolicy} element={<PrivacyPolicyPage/>}/>
+            <Route path={Path.termsOfService} element={<TermsOfServicePage/>}/>
 
             <Route path="/auth" element={<AuthLayout/>}>
                 <Route index element={<Navigate to="/auth/login" replace/>}/>
