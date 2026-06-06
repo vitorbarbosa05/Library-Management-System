@@ -1,8 +1,8 @@
 import {beforeEach, describe, expect, it, vi} from "vitest";
-import * as authorService from "../../../src/modules/author/author.service.js";
-import * as authorController from "../../../src/modules/author/author.controller.js";
+import * as authorService from "../../../../src/modules/author/author.service.js";
+import * as authorController from "../../../../src/modules/author/author.controller.js";
 
-vi.mock("../../../src/modules/author/author.service.js", () => ({
+vi.mock("../../../../src/modules/author/author.service.js", () => ({
     createAuthor: vi.fn(),
     updateAuthor: vi.fn(),
     deleteAuthor: vi.fn(),
@@ -10,10 +10,10 @@ vi.mock("../../../src/modules/author/author.service.js", () => ({
     getAuthorByPublicId: vi.fn(),
 }));
 
-vi.mock("../../../src/modules/author/dto/author.create.dto.js", () => ({
+vi.mock("../../../../src/modules/author/dto/author.create.dto.js", () => ({
     toAuthorCreate: vi.fn((body) => body),
 }));
-vi.mock("../../../src/modules/author/dto/author.update.dto.js", () => ({
+vi.mock("../../../../src/modules/author/dto/author.update.dto.js", () => ({
     toAuthorUpdate: vi.fn((body) => body),
 }));
 
