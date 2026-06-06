@@ -5,13 +5,15 @@ import * as z from "zod";
 import {Button} from "@/src/components/ui/button";
 import {Card, CardContent} from "@/src/components/ui/card";
 import {Field, FieldError, FieldGroup, FieldLabel,} from "@/src/components/ui/field";
-import {Input} from "@/src/components/ui/input";
+import {InputGroup, InputGroupAddon, InputGroupInput,} from "@/src/components/ui/input-group.tsx"
 import {useState} from "react";
 import {AuthApi} from "@/src/(modules)/auth/api/auth.api.ts";
 import {toast} from "sonner";
 import {Spinner} from "@/src/components/ui/spinner.tsx";
 import {Path} from "@/src/router/paths.ts";
 import {Link} from "react-router";
+import InputRealTimeValidationDemo from "@/src/components/ui/input-password.tsx";
+import {ALargeSmallIcon, MailIcon} from "lucide-react";
 
 
 const formSchema = z.object({
@@ -75,17 +77,23 @@ const FormRegister = () => {
                             control={form.control}
                             render={({field, fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="form-register-name">
+                                    <FieldLabel htmlFor="form-register-name" className="gap-1">
                                         Username
+                                        <span className='text-destructive'>*</span>
                                     </FieldLabel>
-                                    <Input
-                                        {...field}
-                                        id="form-register-name"
-                                        aria-invalid={fieldState.invalid}
-                                        placeholder="e.g., Library"
-                                        autoComplete="off"
-                                        type="text"
-                                    />
+                                    <InputGroup>
+                                        <InputGroupInput
+                                            {...field}
+                                            id="form-register-name"
+                                            aria-invalid={fieldState.invalid}
+                                            placeholder="e.g., Library"
+                                            autoComplete="off"
+                                            type="text"
+                                        />
+                                        <InputGroupAddon align="inline-end">
+                                            <ALargeSmallIcon/>
+                                        </InputGroupAddon>
+                                    </InputGroup>
                                     {fieldState.invalid && (
                                         <FieldError errors={[fieldState.error]}/>
                                     )}
@@ -97,17 +105,23 @@ const FormRegister = () => {
                             control={form.control}
                             render={({field, fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="form-register-email">
+                                    <FieldLabel htmlFor="form-register-email" className="gap-1">
                                         Email
+                                        <span className='text-destructive'>*</span>
                                     </FieldLabel>
-                                    <Input
-                                        {...field}
-                                        id="form-register-email"
-                                        aria-invalid={fieldState.invalid}
-                                        placeholder="e.g., librarian@example.com"
-                                        autoComplete="off"
-                                        type="email"
-                                    />
+                                    <InputGroup>
+                                        <InputGroupInput
+                                            {...field}
+                                            id="form-register-email"
+                                            aria-invalid={fieldState.invalid}
+                                            placeholder="e.g., librarian@example.com"
+                                            autoComplete="off"
+                                            type="email"
+                                        />
+                                        <InputGroupAddon align="inline-end">
+                                            <MailIcon/>
+                                        </InputGroupAddon>
+                                    </InputGroup>
                                     {fieldState.invalid && (
                                         <FieldError errors={[fieldState.error]}/>
                                     )}
@@ -117,19 +131,9 @@ const FormRegister = () => {
                         <Controller
                             name="password"
                             control={form.control}
-                            render={({field, fieldState}) => (
+                            render={({fieldState}) => (
                                 <Field data-invalid={fieldState.invalid}>
-                                    <FieldLabel htmlFor="form-register-password">
-                                        Password
-                                    </FieldLabel>
-                                    <Input
-                                        {...field}
-                                        id="form-register-password"
-                                        aria-invalid={fieldState.invalid}
-                                        placeholder="********"
-                                        autoComplete="off"
-                                        type="password"
-                                    />
+                                    <InputRealTimeValidationDemo/>
                                     {fieldState.invalid && (
                                         <FieldError errors={[fieldState.error]}/>
                                     )}
