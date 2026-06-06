@@ -1,11 +1,12 @@
-import { Router } from "express";
-import { register, login } from "../controller/auth.controller.js";
-import { registerValidator, loginValidator } from "../validator/auth.validator.js";
-import { validate } from "../../../shared/middlewares/validation.middleware.js";
+import {Router} from "express";
+import {authRateLimiter} from "../../../shared/middlewares/rate-limit.middleware.js";
+import {loginValidator, registerValidator} from "../validator/auth.validator.js";
+import {validate} from "../../../shared/middlewares/validation.middleware.js";
+import {login, register} from "../controller/auth.controller.js";
 
 const authRouter = Router();
 
-authRouter.post("/register", registerValidator, validate, register);
-authRouter.post("/login", loginValidator, validate, login);
+authRouter.post("/register", authRateLimiter, registerValidator, validate, register);
+authRouter.post("/login", authRateLimiter, loginValidator, validate, login);
 
 export default authRouter;
