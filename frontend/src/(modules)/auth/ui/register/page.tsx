@@ -8,7 +8,7 @@ import FormRegister from "@/src/(modules)/auth/ui/forms/form-register.tsx";
 const RegisterPage = () => {
     return (
         <ModuleWrapper classname="flex flex-col justify-center items-center mx-auto h-screen space-y-2">
-            <header className="space-y-1.5 max-w-xs w-full">
+            <header className="max-w-xs w-full space-y-1.5">
                 <LibraryBigIcon/>
                 <h3 className="scroll-m-20 text-2xl font-medium tracking-tight">
                     Library

@@ -1,7 +1,7 @@
 export const Path = {
     // AUTH
-    login: "/login",
-    register: "/register",
+    login: "/auth/login",
+    register: "/auth/register",
 
     termsOfService: "/terms",
     privacyPolicy: "/privacy",
