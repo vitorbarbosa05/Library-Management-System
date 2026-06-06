@@ -2,7 +2,7 @@ model Author {
   id       Int     @id @default(autoincrement())
   publicId String  @unique @default(uuid()) @map("public_id") @db.Uuid
   name     String  @db.VarChar(200)
-  bio      String?
+  bio      String? @db.VarChar(200)
 
   books AuthorOnBook[]
 

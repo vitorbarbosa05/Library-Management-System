@@ -8,7 +8,9 @@ export const createBookValidator = [
 
     body("genre")
         .trim()
-        .notEmpty().withMessage("Genre is required"),
+        .notEmpty().withMessage("Genre is required")
+        .isIn(["FANTASY", "SCIENCE_FICTION", "ACTION_ADVENTURE", "MYSTERY", "HORROR", "THRILLER_SUSPENSE", "HISTORICAL_FICTION", "ROMANCE", "SHORT_STORY", "CHILDRENS", "AUTOBIOGRAPHY", "FOOD_DRINK", "ART", "SELF_HELP", "HISTORY", "TRAVEL", "CRIME"])
+        .withMessage("Invalid genre"),
 
     body("publishDate")
         .notEmpty().withMessage("Publish date is required")
@@ -24,15 +26,42 @@ export const createBookValidator = [
         .isInt({min: 0}).withMessage("Stock must be a non negative integer"),
 
     body("authorIds")
-        .isArray({ min: 1 }).withMessage("At least one author is required"),
+        .isArray({min: 1}).withMessage("At least one author is required"),
+
+    body("authorIds.*")
+        .isUUID().withMessage("Each authorId must be a valid UUID"),
 ];
 
 export const updateBookValidator = [
-    body("title").optional().trim().isLength({ max: 200 }),
-    body("genre").optional().trim(),
-    body("publishDate").optional().isISO8601(),
-    body("isbn").optional().trim().isISBN(),
-    body("stock").optional().isInt({ min: 0 }),
-    body("authorIds").optional().isArray({ min: 1 }),
-    body("authorIds.*").optional().isUUID(),
+    body("title")
+        .optional()
+        .trim()
+        .isLength({max: 200}),
+
+    body("genre")
+        .optional()
+        .trim()
+        .isIn(["FANTASY", "SCIENCE_FICTION", "ACTION_ADVENTURE", "MYSTERY", "HORROR", "THRILLER_SUSPENSE", "HISTORICAL_FICTION", "ROMANCE", "SHORT_STORY", "CHILDRENS", "AUTOBIOGRAPHY", "FOOD_DRINK", "ART", "SELF_HELP", "HISTORY", "TRAVEL", "CRIME"])
+        .withMessage("Invalid genre"),
+
+    body("publishDate")
+        .optional()
+        .isISO8601(),
+
+    body("isbn")
+        .optional()
+        .trim()
+        .isISBN(),
+
+    body("stock")
+        .optional()
+        .isInt({min: 0}),
+
+    body("authorIds")
+        .optional()
+        .isArray({min: 1}),
+
+    body("authorIds.*")
+        .optional()
+        .isUUID(),
 ];
