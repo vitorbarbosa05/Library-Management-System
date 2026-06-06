@@ -7,12 +7,12 @@ import {Card, CardContent} from "@/src/components/ui/card";
 import {Field, FieldError, FieldGroup, FieldLabel,} from "@/src/components/ui/field";
 import {InputGroup, InputGroupAddon, InputGroupInput,} from "@/src/components/ui/input-group.tsx"
 import {useState} from "react";
-import {AuthApi} from "@/src/(modules)/auth/api/auth.api.ts";
 import {toast} from "sonner";
 import {Spinner} from "@/src/components/ui/spinner.tsx";
 import {Path} from "@/src/router/paths.ts";
-import {Link} from "react-router";
+import {Link, useNavigate} from "react-router";
 import {EyeIcon, EyeOffIcon, MailIcon} from "lucide-react";
+import {useAuth} from "@/src/(modules)/auth/context/auth.context";
 
 const formSchema = z.object({
     email: z
@@ -30,6 +30,8 @@ const formSchema = z.object({
 const FormLogin = () => {
     const [isLoading, setIsLoading] = useState(false);
     const [isVisible, setIsVisible] = useState(false);
+    const navigate = useNavigate();
+    const {login} = useAuth();
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -44,13 +46,17 @@ const FormLogin = () => {
         setIsLoading(true);
 
         try {
-            await AuthApi.login(data);
+            await login(data);
 
             toast.success("Login successful");
 
             setTimeout(() => {
                 form.reset();
             }, 800);
+
+            navigate(Path.dashboard, {
+                replace: true,
+            });
 
         } catch (error) {
             const message = error instanceof Error ? error.message : "Error";
