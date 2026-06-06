@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {createAuthorValidtor, updateAuthorValidtor} from "./author.validator.js";
+import {createAuthorValidator, updateAuthorValidator} from "./author.validator.js";
 import {validate} from "../../shared/middlewares/validation.middleware.js";
 import {authMiddleware} from "../../shared/middlewares/auth.middleware.js";
 import {requireRole} from "../../shared/middlewares/role.middleware.js";
@@ -10,7 +10,7 @@ const authorRouter = Router();
 authorRouter.post("/",
     authMiddleware,
     requireRole("ADMIN", "LIBRARIAN"),
-    createAuthorValidtor,
+    createAuthorValidator,
     validate,
     createAuthor
 );
@@ -18,7 +18,7 @@ authorRouter.post("/",
 authorRouter.patch("/:id",
     authMiddleware,
     requireRole("ADMIN", "LIBRARIAN"),
-    updateAuthorValidtor,
+    updateAuthorValidator,
     validate,
     updateAuthor
 );
