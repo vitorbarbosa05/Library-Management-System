@@ -109,10 +109,10 @@ describe('DELETE /api/v1/author/:id', () => {
     })
 
     it("should throw 404 when author not found", async () => {
-        prisma.author.delete.mockResolvedValue(null);
+        prisma.author.findUnique.mockResolvedValue(null);
 
-        await expect(authorService.deleteAuthor("missing-value"))
-            .rejects.toThrow("Author not found");
+        await expect(authorService.deleteAuthor("missing")
+        ).rejects.toThrow("Author not found");
 
         expect(prisma.author.delete).not.toHaveBeenCalled();
     });
