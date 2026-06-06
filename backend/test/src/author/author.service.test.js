@@ -125,7 +125,15 @@ describe('GET /api/v1/author/', () => {
     })
 
     it("should apply search filter when provided", async () => {
+        prisma.author.findMany.mockResolvedValue([]);
+        prisma.author.count.mockResolvedValue(0);
 
+        await authorService.getAllAuthors({search: "murakami"});
+
+        const findManyArg = prisma.author.findMany.mock.calls[0][0];
+        expect(findManyArg.where).toEqual({
+            name: {contains: "murakami", mode: "insensitive"},
+        });
     });
 
     it("should clamp size to MAX_SIZE", async () => {
