@@ -1,16 +1,30 @@
 import { Navigate, Outlet } from "react-router";
-import { useAuth } from "@/src/(default)/auth/context/auth.context";
+
+import { Spinner } from "@/src/components/ui/spinner";
+import { useAuth } from "@/src/(default)/auth/hooks/use.auth";
 import { Path } from "@/src/router/paths";
 
 export function GuestOnlyRoute() {
     const { status, isAuthenticated } = useAuth();
 
     if (status === "idle" || status === "loading") {
-        return null;
+        return (
+            <div className="flex min-h-screen items-center justify-center">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                    <Spinner className="size-4" />
+                    <span className="text-sm">Loading...</span>
+                </div>
+            </div>
+        );
     }
 
     if (isAuthenticated) {
-        return <Navigate to={Path.dashboard} replace />;
+        return (
+            <Navigate
+                to={Path.dashboard}
+                replace
+            />
+        );
     }
 
     return <Outlet />;

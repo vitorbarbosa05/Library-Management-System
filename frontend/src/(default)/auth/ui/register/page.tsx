@@ -4,6 +4,7 @@ import LinkAnimated from "@/src/components/shared/link-animated.tsx";
 import {Path} from "@/src/router/paths.ts";
 import {Separator} from "@/src/components/ui/separator.tsx";
 import FormRegister from "@/src/(default)/auth/ui/forms/form-register.tsx";
+import {Card, CardContent} from "@/src/components/ui/card.tsx";
 
 const RegisterPage = () => {
     return (
@@ -19,7 +20,11 @@ const RegisterPage = () => {
             </header>
 
             <main className="max-w-xs w-full">
-                <FormRegister/>
+                <Card>
+                    <CardContent>
+                        <FormRegister/>
+                    </CardContent>
+                </Card>
             </main>
 
             <footer className="flex gap-2 text-xs font-medium text-muted-foreground">

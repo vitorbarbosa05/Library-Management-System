@@ -4,6 +4,7 @@ import LinkAnimated from "@/src/components/shared/link-animated.tsx";
 import {Path} from "@/src/router/paths.ts";
 import {LibraryBigIcon} from "lucide-react";
 import FormLogin from "@/src/(default)/auth/ui/forms/form-login.tsx";
+import {Card, CardContent} from "@/src/components/ui/card.tsx";
 
 const LoginPage = () => {
     return (
@@ -19,7 +20,11 @@ const LoginPage = () => {
             </header>
 
             <main className="max-w-xs w-full">
-                <FormLogin/>
+                <Card>
+                    <CardContent>
+                        <FormLogin/>
+                    </CardContent>
+                </Card>
             </main>
 
             <footer className="flex gap-2 text-xs font-medium text-muted-foreground">

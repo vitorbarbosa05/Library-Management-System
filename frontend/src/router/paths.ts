@@ -14,6 +14,9 @@ export const Path = {
     dashboard: "/dashboard",
 
     // FEATURES
+    books: "/books",
+    authors: "/authors",
+    loans: "/loans",
 
     // SYSTEM
     settings: "/settings",
