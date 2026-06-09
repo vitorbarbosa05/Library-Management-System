@@ -1,4 +1,4 @@
-import {AmphoraIcon, ChartLineIcon, CogIcon, GiftIcon, HandCoinsIcon, OrigamiIcon,} from "lucide-react";
+import {AmphoraIcon, ChartLineIcon, CogIcon, GiftIcon, HandCoinsIcon, LibraryBigIcon,} from "lucide-react";
 import type * as React from "react";
 import ModuleSidebarMenu from "@/src/(modules)/ui/layout/module-sidebar-menu.tsx";
 import ModuleSidebarUser from "@/src/(modules)/ui/layout/module-sidebar-user.tsx";
@@ -14,6 +14,7 @@ import {
 } from "@/src/components/ui/sidebar";
 import {Path} from "@/src/router/paths.ts";
 import {NavLink} from "react-router";
+import {useActuatorInfo} from "@/src/lib/hooks/use-actuator-info.ts";
 
 
 const sidebarData = {
@@ -53,6 +54,8 @@ const sidebarData = {
 };
 
 const ModuleSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
+    const { info, loading, error } = useActuatorInfo();
+
     return (
         <Sidebar variant="inset" collapsible="icon" {...props}>
             <SidebarHeader>
@@ -62,11 +65,15 @@ const ModuleSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
                             <NavLink to={Path.dashboard}>
                                 <div className="flex items-center gap-2">
                                     <div className="flex aspect-square size-7 items-center justify-center rounded-lg">
-                                        <OrigamiIcon size={16} />
+                                        <LibraryBigIcon size={16} />
                                     </div>
                                     <div className="grid flex-1 text-left text-sm leading-tight">
-                                        <span className="truncate font-semibold">Library</span>
-                                        <span className="truncate text-xs">Library Management</span>
+                                        <span className="truncate font-semibold">
+                                            {loading ? "Loading..." : error ? "Library" : info?.app.name}
+                                        </span>
+                                        <span className="truncate text-xs">
+                                            {loading ? "..." : error ? "v.unknown" : `v.${info?.app.version}`}
+                                        </span>
                                     </div>
                                 </div>
                             </NavLink>
