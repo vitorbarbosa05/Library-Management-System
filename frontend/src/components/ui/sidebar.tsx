@@ -5,10 +5,10 @@ import { cva, type VariantProps } from "class-variance-authority"
 import { Slot } from "radix-ui"
 
 import { useIsMobile } from "@/hooks/use-mobile.ts"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/ui/button.tsx"
-import { Input } from "@/components/ui/input.tsx"
-import { Separator } from "@/components/ui/separator.tsx"
+import { cn } from "@/src/lib/utils"
+import { Button } from "@/src/components/ui/button.tsx"
+import { Input } from "@/src/components/ui/input.tsx"
+import { Separator } from "@/src/components/ui/separator.tsx"
 import {
   Sheet,
   SheetContent,
