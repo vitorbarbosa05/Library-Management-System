@@ -1,8 +1,6 @@
-export type Paginated<T> = {
-    data: T[];
-    total: number;
-    page: number;
-    pageSize: number;
+export type ApiResponse<T> = {
+    data: T;
+    message?: string;
 };
 
 export type PaginatedResponse<T> = {
@@ -10,7 +8,15 @@ export type PaginatedResponse<T> = {
     meta: {
         total: number;
         page: number;
-        pageSize: number;
+        size: number;
         totalPages: number;
     };
+};
+
+export type PaginationQuery = {
+    page?: number;
+    size?: number;
+    sort?: string;
+    order?: "asc" | "desc";
+    search?: string;
 };
