@@ -1,7 +1,7 @@
 import {useCallback, useState} from "react";
-import type {AuthResponse, RegisterPayload} from "@/src/(modules)/auth/types/auth.types.ts";
-import {AuthApi} from "@/src/(modules)/auth/api/auth.api.ts";
-import {setStoredAuthToken} from "@/src/(modules)/auth/storage/auth.storage.ts";
+import type {AuthResponse, RegisterPayload} from "@/src/(default)/auth/types/auth.types.ts";
+import {AuthApi} from "@/src/(default)/auth/api/auth.api.ts";
+import {setStoredAuthToken} from "@/src/(default)/auth/storage/auth.storage.ts";
 
 export function useRegister() {
     const [loading, setLoading] = useState(false);

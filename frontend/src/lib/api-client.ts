@@ -1,5 +1,5 @@
 import axios, {type AxiosInstance, type InternalAxiosRequestConfig} from "axios";
-import {clearStoredAuthToken, getStoredAuthToken} from "@/src/(modules)/auth/storage/auth.storage.ts";
+import {clearStoredAuthToken, getStoredAuthToken} from "@/src/(default)/auth/storage/auth.storage.ts";
 
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL;
 

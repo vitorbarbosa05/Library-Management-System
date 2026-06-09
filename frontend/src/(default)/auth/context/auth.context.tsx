@@ -1,14 +1,14 @@
 import {createContext, type ReactNode, useCallback, useContext, useEffect, useMemo, useState,} from "react";
 
-import {AuthApi} from "@/src/(modules)/auth/api/auth.api";
+import {AuthApi} from "@/src/(default)/auth/api/auth.api.ts";
 import type {
     AuthContextValue,
     AuthStatus,
     AuthUser,
     LoginPayload,
     RegisterPayload,
-} from "@/src/(modules)/auth/types/auth.types";
-import {clearStoredAuthToken, getStoredAuthToken, setStoredAuthToken,} from "@/src/(modules)/auth/storage/auth.storage";
+} from "@/src/(default)/auth/types/auth.types.ts";
+import {clearStoredAuthToken, getStoredAuthToken, setStoredAuthToken,} from "@/src/(default)/auth/storage/auth.storage.ts";
 
 const AuthContext = createContext<AuthContextValue | null>(null);
 

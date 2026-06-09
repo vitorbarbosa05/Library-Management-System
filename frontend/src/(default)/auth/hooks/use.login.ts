@@ -1,7 +1,7 @@
 import {useCallback, useState} from "react";
-import type {AuthResponse, LoginPayload} from "@/src/(modules)/auth/types/auth.types";
-import {setStoredAuthToken} from "@/src/(modules)/auth/storage/auth.storage";
-import {AuthApi} from "@/src/(modules)/auth/api/auth.api";
+import type {AuthResponse, LoginPayload} from "@/src/(default)/auth/types/auth.types.ts";
+import {setStoredAuthToken} from "@/src/(default)/auth/storage/auth.storage.ts";
+import {AuthApi} from "@/src/(default)/auth/api/auth.api.ts";
 
 export function useLogin() {
     const [loading, setLoading] = useState(false);

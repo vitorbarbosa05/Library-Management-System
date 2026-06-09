@@ -1,5 +1,5 @@
-import http from "@/src/lib/api-client";
-import type {AuthResponse, AuthUser, LoginPayload, RegisterPayload,} from "@/src/(modules)/auth/types/auth.types";
+import http from "@/src/lib/api-client.ts";
+import type {AuthResponse, AuthUser, LoginPayload, RegisterPayload,} from "@/src/(default)/auth/types/auth.types.ts";
 
 export const AuthApi = {
     register: async (payload: RegisterPayload): Promise<AuthResponse> => {

@@ -3,7 +3,7 @@ import {Separator} from "@/src/components/ui/separator.tsx";
 import LinkAnimated from "@/src/components/shared/link-animated.tsx";
 import {Path} from "@/src/router/paths.ts";
 import {LibraryBigIcon} from "lucide-react";
-import FormLogin from "@/src/(modules)/auth/ui/forms/form-login.tsx";
+import FormLogin from "@/src/(default)/auth/ui/forms/form-login.tsx";
 
 const LoginPage = () => {
     return (

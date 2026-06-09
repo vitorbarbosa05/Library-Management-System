@@ -6,9 +6,9 @@ import NotFound from "@/src/not-found.tsx";
 import { ProtectedRoute } from "@/src/router/protected-route.tsx";
 import { GuestOnlyRoute } from "@/src/router/guest-only-route.tsx";
 
-import AuthLayout from "@/src/(modules)/auth/ui/layout.tsx";
-import LoginPage from "@/src/(modules)/auth/ui/login/page.tsx";
-import RegisterPage from "@/src/(modules)/auth/ui/register/page.tsx";
+import AuthLayout from "@/src/(default)/auth/ui/layout.tsx";
+import LoginPage from "@/src/(default)/auth/ui/login/page.tsx";
+import RegisterPage from "@/src/(default)/auth/ui/register/page.tsx";
 
 import PrivacyPolicyPage from "@/src/(default)/privacy/ui/page.tsx";
 import TermsOfServicePage from "@/src/(default)/terms/ui/page.tsx";

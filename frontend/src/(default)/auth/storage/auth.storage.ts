@@ -1,4 +1,4 @@
-import { AUTH_TOKEN_STORAGE_KEY } from "@/src/(modules)/auth/types/auth.types";
+import { AUTH_TOKEN_STORAGE_KEY } from "@/src/(default)/auth/types/auth.types.ts";
 
 export function getStoredAuthToken(): string | null {
     try {

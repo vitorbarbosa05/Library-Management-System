@@ -3,7 +3,7 @@ import {LibraryBigIcon} from "lucide-react";
 import LinkAnimated from "@/src/components/shared/link-animated.tsx";
 import {Path} from "@/src/router/paths.ts";
 import {Separator} from "@/src/components/ui/separator.tsx";
-import FormRegister from "@/src/(modules)/auth/ui/forms/form-register.tsx";
+import FormRegister from "@/src/(default)/auth/ui/forms/form-register.tsx";
 
 const RegisterPage = () => {
     return (
