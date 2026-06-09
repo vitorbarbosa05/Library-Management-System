@@ -29,7 +29,7 @@ const ModuleSidebarMenu = ({
                 {items.map((item) => (
                     <SidebarMenuItem key={item.label}>
                         <SidebarMenuButton
-                            size="sm"
+                            size="default"
                             asChild
                             tooltip={item.label}
                             className="hover:!rounded-2xl"

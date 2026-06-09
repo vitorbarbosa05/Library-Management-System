@@ -1,4 +1,4 @@
-import {AmphoraIcon, ChartLineIcon, CogIcon, GiftIcon, HandCoinsIcon, LibraryBigIcon,} from "lucide-react";
+import {BookIcon, ChartLineIcon, CogIcon, LibraryBigIcon, SignatureIcon, TagsIcon,} from "lucide-react";
 import type * as React from "react";
 import ModuleSidebarMenu from "@/src/(modules)/ui/layout/module-sidebar-menu.tsx";
 import ModuleSidebarUser from "@/src/(modules)/ui/layout/module-sidebar-user.tsx";
@@ -30,17 +30,17 @@ const sidebarData = {
         {
             label: "Books",
             url: Path.dashboard,
-            icon: AmphoraIcon,
+            icon: BookIcon,
         },
         {
             label: "Authors",
             url: Path.dashboard,
-            icon: GiftIcon,
+            icon: SignatureIcon,
         },
         {
             label: "Loans",
             url: Path.dashboard,
-            icon: HandCoinsIcon,
+            icon: TagsIcon,
         },
     ],
 

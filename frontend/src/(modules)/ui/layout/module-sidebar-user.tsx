@@ -1,5 +1,5 @@
-import { BadgeCheck, Bell, ChevronsUpDown, LogOut, User } from "lucide-react";
-import { Avatar, AvatarFallback, AvatarImage } from "@/src/components/ui/avatar";
+import {BadgeCheck, Bell, ChevronsUpDown, LogOut, User} from "lucide-react";
+import {Avatar, AvatarFallback, AvatarImage} from "@/src/components/ui/avatar";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -18,14 +18,11 @@ import {
 import {Path} from "@/src/router/paths.ts";
 import {NavLink} from "react-router";
 import {toast} from "sonner";
+import {useAuth} from "@/src/(default)/auth/hooks/use.auth.ts";
 
 const ModuleSidebarUser = () => {
-    const { isMobile } = useSidebar();
-
-    const user = {
-        name: "user",
-        email: "user@example.com"
-    }
+    const {isMobile} = useSidebar();
+    const {user} = useAuth();
 
     const handleLogout = () => {
         toast.success("Logout clicked");
@@ -41,16 +38,16 @@ const ModuleSidebarUser = () => {
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
                             <Avatar className="h-8 w-8 rounded-lg">
-                                <AvatarImage src={""} alt={user?.name} />
+                                <AvatarImage src={""} alt={user?.name}/>
                                 <AvatarFallback className="rounded-lg">
-                                    <User className="size-4" />
+                                    <User className="size-4"/>
                                 </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-medium">{user?.name ?? ""}</span>
                                 <span className="truncate text-xs">{user?.email ?? ""}</span>
                             </div>
-                            <ChevronsUpDown className="ml-auto size-4" />
+                            <ChevronsUpDown className="ml-auto size-4"/>
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent
@@ -62,9 +59,9 @@ const ModuleSidebarUser = () => {
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-lg">
-                                    <AvatarImage src={""} alt={user?.name} />
+                                    <AvatarImage src={""} alt={user?.name}/>
                                     <AvatarFallback className="rounded-lg">
-                                        <User className="size-4" />
+                                        <User className="size-4"/>
                                     </AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
@@ -73,22 +70,22 @@ const ModuleSidebarUser = () => {
                                 </div>
                             </div>
                         </DropdownMenuLabel>
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator/>
                         <DropdownMenuGroup>
                             <NavLink to={Path.settings}>
                                 <DropdownMenuItem>
-                                    <BadgeCheck />
+                                    <BadgeCheck/>
                                     Profile
                                 </DropdownMenuItem>
                             </NavLink>
                             <DropdownMenuItem>
-                                <Bell />
+                                <Bell/>
                                 Notifications
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator/>
                         <DropdownMenuItem variant={"destructive"} onClick={handleLogout}>
-                            <LogOut />
+                            <LogOut/>
                             Logout
                         </DropdownMenuItem>
                     </DropdownMenuContent>
