@@ -1,6 +1,6 @@
 export function toUserResponse(user) {
     return {
-        id: user.publicId,
+        publicId: user.publicId,
         name: user.name,
         email: user.email,
         role: user.role,

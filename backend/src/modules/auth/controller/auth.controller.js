@@ -1,4 +1,5 @@
 import * as authService from "../service/auth.service.js";
+import {AppError} from "../../../shared/errors/AppError.js";
 
 export const register = async (req, res, next) => {
     const { name, email, password } = req.body;
@@ -27,3 +28,22 @@ export const login = async (req, res, next) => {
         next(error);
     }
 };
+
+export const me = async (req, res, next) => {
+    try {
+        if (!req.user) {
+            throw new AppError("Authenticated user not found", 401);
+        }
+
+        const user = await authService.me(req.user.id);
+        return res.status(200).json({
+            success: true,
+            message: "Authenticated user retrieved successfully",
+            data: {
+                user,
+            },
+        });
+    } catch (error) {
+        next(error);
+    }
+}
