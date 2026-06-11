@@ -1,64 +1,46 @@
-// src/(modules)/authors/components/form-create-author.tsx
-import { useState } from "react";
-import { Controller, useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { z } from "zod";
-import { NavLink, useNavigate } from "react-router";
-import { PlusIcon, SignatureIcon } from "lucide-react";
-import { toast } from "sonner";
+import {useState} from "react";
+import {Controller, useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {
+    authorFormSchema,
+    type AuthorFormValues,
+    MAX_BIO_LENGTH,
+} from "@/src/(modules)/authors/ui/components/forms/author-schema.ts";
+import {NavLink, useNavigate} from "react-router";
+import {PlusIcon, SignatureIcon} from "lucide-react";
+import {toast} from "sonner";
 import axios from "axios";
 
-import { Path } from "@/src/router/paths";
+import {Path} from "@/src/router/paths";
 import GoBack from "@/src/components/shared/go-back";
-import { Card, CardContent } from "@/src/components/ui/card";
-import {
-    Field,
-    FieldError,
-    FieldGroup,
-    FieldLabel,
-} from "@/src/components/ui/field";
-import {
-    InputGroup,
-    InputGroupAddon,
-    InputGroupInput,
-} from "@/src/components/ui/input-group";
-import { Textarea } from "@/src/components/ui/textarea";
-import { Separator } from "@/src/components/ui/separator";
-import { Button } from "@/src/components/ui/button";
-import { Spinner } from "@/src/components/ui/spinner";
-import { AuthorService } from "@/src/(modules)/authors/service/author.service";
-import { extractErrorMessage } from "@/src/lib/extract-error-message";
+import {Card, CardContent} from "@/src/components/ui/card";
+import {Field, FieldError, FieldGroup, FieldLabel,} from "@/src/components/ui/field";
+import {InputGroup, InputGroupAddon, InputGroupInput,} from "@/src/components/ui/input-group";
+import {Textarea} from "@/src/components/ui/textarea";
+import {Separator} from "@/src/components/ui/separator";
+import {Button} from "@/src/components/ui/button";
+import {Spinner} from "@/src/components/ui/spinner";
+import {AuthorService} from "@/src/(modules)/authors/service/author.service";
+import {extractErrorMessage} from "@/src/lib/extract-error-message";
 
-const MAX_BIO_LENGTH = 200;
-
-const formSchema = z.object({
-    name: z.string().trim().min(1, "Author name is required"),
-    bio: z
-        .string()
-        .trim()
-        .max(MAX_BIO_LENGTH, `Bio max ${MAX_BIO_LENGTH} characters`)
-        .optional()
-        .or(z.literal("").transform(() => undefined)),
-});
-
-type FormValues = z.infer<typeof formSchema>;
+const FORM_ID = "create-author-form";
 
 const FormCreateAuthor = () => {
     const navigate = useNavigate();
     const [loading, setLoading] = useState(false);
 
-    const form = useForm<FormValues>({
-        resolver: zodResolver(formSchema),
-        defaultValues: { name: "", bio: "" },
+    const form = useForm<AuthorFormValues>({
+        resolver: zodResolver(authorFormSchema),
+        defaultValues: {name: "", bio: ""},
     });
 
     const bioValue = form.watch("bio") ?? "";
     const remainingChars = Math.max(0, MAX_BIO_LENGTH - bioValue.length);
 
-    async function handleCreateAuthor(data: FormValues) {
+    async function handleCreateAuthor(data: AuthorFormValues) {
         setLoading(true);
         try {
-            await AuthorService.create({ name: data.name, bio: data.bio });
+            await AuthorService.create({name: data.name, bio: data.bio});
             toast.success("Author successfully created");
             navigate(Path.authors);
         } catch (error) {
@@ -79,13 +61,14 @@ const FormCreateAuthor = () => {
     return (
         <section className="space-y-6">
             <header className="flex flex-col items-start gap-4">
-                <GoBack path={Path.authors} module="authors" />
+                <GoBack path={Path.authors} module="authors"/>
             </header>
 
             <Card>
                 <CardContent>
                     <form
                         onSubmit={form.handleSubmit(handleCreateAuthor)}
+                        id={FORM_ID}
                         className="space-y-12"
                         noValidate
                     >
@@ -105,7 +88,7 @@ const FormCreateAuthor = () => {
                                     <Controller
                                         name="name"
                                         control={form.control}
-                                        render={({ field, fieldState }) => (
+                                        render={({field, fieldState}) => (
                                             <Field data-invalid={fieldState.invalid}>
                                                 <FieldLabel
                                                     htmlFor="form-create-author-name"
@@ -125,11 +108,11 @@ const FormCreateAuthor = () => {
                                                         disabled={loading}
                                                     />
                                                     <InputGroupAddon align="inline-end">
-                                                        <SignatureIcon />
+                                                        <SignatureIcon/>
                                                     </InputGroupAddon>
                                                 </InputGroup>
                                                 {fieldState.invalid && fieldState.error ? (
-                                                    <FieldError errors={[fieldState.error]} />
+                                                    <FieldError errors={[fieldState.error]}/>
                                                 ) : null}
                                             </Field>
                                         )}
@@ -138,7 +121,7 @@ const FormCreateAuthor = () => {
                                     <Controller
                                         name="bio"
                                         control={form.control}
-                                        render={({ field, fieldState }) => (
+                                        render={({field, fieldState}) => (
                                             <Field data-invalid={fieldState.invalid}>
                                                 <FieldLabel htmlFor="form-create-author-bio">
                                                     Bio
@@ -156,7 +139,7 @@ const FormCreateAuthor = () => {
                                                     characters remaining
                                                 </div>
                                                 {fieldState.invalid && fieldState.error ? (
-                                                    <FieldError errors={[fieldState.error]} />
+                                                    <FieldError errors={[fieldState.error]}/>
                                                 ) : null}
                                             </Field>
                                         )}
@@ -164,7 +147,7 @@ const FormCreateAuthor = () => {
                                 </div>
                             </div>
 
-                            <Separator />
+                            <Separator/>
 
                             {/* ACTIONS */}
                             <div className="flex flex-wrap items-center justify-between gap-5">
@@ -184,14 +167,15 @@ const FormCreateAuthor = () => {
 
                                 <Button
                                     type="submit"
+                                    form={FORM_ID}
                                     disabled={loading}
                                     className="min-w-[140px]"
                                 >
                                     {loading ? (
-                                        <Spinner />
+                                        <Spinner/>
                                     ) : (
                                         <>
-                                            <PlusIcon className="mr-2 h-4 w-4" />
+                                            <PlusIcon className="mr-2 h-4 w-4"/>
                                             Create author
                                         </>
                                     )}
