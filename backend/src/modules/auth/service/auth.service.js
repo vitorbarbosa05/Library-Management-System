@@ -5,6 +5,7 @@ import prisma from "../../../../prisma/prisma.client.js";
 import {AppError} from "../../../shared/errors/AppError.js";
 import {hashEmail} from "../../../shared/utils/crypto.utils.js";
 import {toAuthResponse} from "../dto/auth.response.dto.js";
+import {toUserResponse} from "../dto/user.response.dto.js";
 
 const SALT_ROUNDS = 12;
 const JWT_ISSUER = "library-backend";
@@ -91,4 +92,15 @@ export async function login(email, password) {
     const token = generateAccessToken(existingUser);
 
     return toAuthResponse(existingUser, token);
+}
+
+export async function me(publicId) {
+    const existingUser = await prisma.user.findUnique({where: {publicId}});
+
+    if (!existingUser) {
+        logger.warn({publicId}, "User failed: user not found");
+        throw new AppError("Authenticated user not found", 401);
+    }
+
+    return toUserResponse(existingUser);
 }
