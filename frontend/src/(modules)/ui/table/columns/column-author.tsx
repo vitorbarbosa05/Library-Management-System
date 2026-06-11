@@ -15,7 +15,7 @@ export function useColumnsAuthors() {
                 header: ({column}) => (
                     <DataTableColumnHeader
                         column={column}
-                        title="Nome"
+                        title="Name"
                         tooltip="Name and bio of author"
                     />
                 ),
