@@ -16,6 +16,7 @@ import TermsOfServicePage from "@/src/(default)/terms/ui/page.tsx";
 import ModuleLayout from "@/src/(modules)/ui/layout/layout.tsx";
 import DashboardPage from "@/src/(modules)/dashboard/ui/page.tsx";
 import AuthorsPage from "@/src/(modules)/authors/ui/page.tsx";
+import AuthorCreatePage from "@/src/(modules)/authors/ui/components/author-create.tsx";
 
 import {Path} from "@/src/router/paths.ts";
 
@@ -39,6 +40,7 @@ const AppRouter = () => {
                 <Route element={<ModuleLayout/>}>
                     <Route path={Path.dashboard} element={<DashboardPage/>}/>
                     <Route path={Path.authors} element={<AuthorsPage/>}/>
+                    <Route path={Path.newAuthor} element={<AuthorCreatePage/>}/>
                 </Route>
             </Route>
 

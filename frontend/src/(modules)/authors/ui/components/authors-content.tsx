@@ -1,15 +1,15 @@
 import {useColumnsAuthors} from "@/src/(modules)/ui/table/columns/column-author.tsx";
-import {useAuthors} from "@/src/(modules)/authors/hooks/use.author.ts";
 import {useServerDataTable} from "@/src/(modules)/ui/table/data/use-server-data-table.ts";
 import {ModuleDataTable} from "@/src/(modules)/ui/table/data/module-data-table.tsx";
+import {AuthorRowActions} from "@/src/(modules)/authors/ui/components/author-row-actions.tsx";
+
+import {useAuthors} from "@/src/(modules)/authors/hooks/use.author.ts";
 import type {AuthorResponse} from "@/src/(modules)/authors/types/author.types.ts";
 
 const AuthorsContent = () => {
-    const tableState = useServerDataTable({initialPageSize: 10});
+    const tableState = useServerDataTable({ initialPageSize: 10 });
     const columnAuthor = useColumnsAuthors();
-    const {authors, loading, error} = useAuthors(tableState.query);
-
-    console.log("Data:", authors);
+    const { authors, loading, error, fetchAuthors } = useAuthors(tableState.query);
 
     return (
         <div className="flex flex-1 flex-col">
@@ -24,7 +24,9 @@ const AuthorsContent = () => {
                 errorMessage={error?.message}
                 searchPlaceholder="Search by author name or bio..."
                 emptyMessage="No authors found."
-                // RowActionsComponent={AuthorRowActions}
+                RowActionsComponent={AuthorRowActions}
+                onRowDeleted={() => fetchAuthors(tableState.query)}
+                onRowUpdated={() => fetchAuthors(tableState.query)}
                 pageIndex={tableState.pageIndex}
                 pageSize={tableState.pageSize}
                 sorting={tableState.sorting}
