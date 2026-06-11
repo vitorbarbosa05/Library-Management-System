@@ -15,7 +15,11 @@ export const Path = {
 
     // FEATURES
     books: "/books",
+
+
     authors: "/authors",
+    newAuthor: "/authors/new",
+
     loans: "/loans",
 
     // SYSTEM

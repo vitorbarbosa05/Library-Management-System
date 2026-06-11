@@ -18,6 +18,8 @@ import {Spinner} from "@/src/components/ui/spinner";
 
 import type {UUID} from "@/src/lib/types/uuid.types";
 import {getPaginationItems} from "./pagination-utils";
+import {NavLink} from "react-router";
+import {Path} from "@/src/router/paths.ts";
 
 export interface RowActionsProps<TData> {
     id: UUID;
@@ -125,6 +127,12 @@ export function ModuleDataTable<TData>({
                     </div>
                     {filtersContent}
                 </div>
+
+                <NavLink to={Path.newAuthor}>
+                    <Button>
+                        Add new Author
+                    </Button>
+                </NavLink>
             </div>
 
             {errorMessage ? (
