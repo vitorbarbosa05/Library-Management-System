@@ -11,6 +11,7 @@ interface DataTableColumnHeaderNoSortProps<TData, TValue>
 }
 
 export function DataTableColumnHeaderNoSort<TData, TValue>({
+                                                               // eslint-disable-next-line @typescript-eslint/no-unused-vars
                                                                column: _column,
                                                                title,
                                                                className,
