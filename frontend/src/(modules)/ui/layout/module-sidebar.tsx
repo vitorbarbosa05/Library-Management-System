@@ -34,7 +34,7 @@ const sidebarData = {
         },
         {
             label: "Authors",
-            url: Path.dashboard,
+            url: Path.authors,
             icon: SignatureIcon,
         },
         {

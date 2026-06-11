@@ -15,33 +15,34 @@ import TermsOfServicePage from "@/src/(default)/terms/ui/page.tsx";
 
 import ModuleLayout from "@/src/(modules)/ui/layout/layout.tsx";
 import DashboardPage from "@/src/(modules)/dashboard/ui/page.tsx";
+import AuthorsPage from "@/src/(modules)/authors/ui/page.tsx";
 
 import {Path} from "@/src/router/paths.ts";
 
 const AppRouter = () => {
     return (
         <Routes>
-            <Route element={<GuestOnlyRoute />}>
-                <Route path="/" element={<Page />} />
+            <Route element={<GuestOnlyRoute/>}>
+                <Route path="/" element={<Page/>}/>
 
-                <Route path={Path.privacyPolicy} element={<PrivacyPolicyPage />} />
-                <Route path={Path.termsOfService} element={<TermsOfServicePage />} />
+                <Route path={Path.privacyPolicy} element={<PrivacyPolicyPage/>}/>
+                <Route path={Path.termsOfService} element={<TermsOfServicePage/>}/>
 
-                <Route path="/auth" element={<AuthLayout />}>
-                    <Route index element={<Navigate to={Path.login} replace />} />
-                    <Route path="login" element={<LoginPage />} />
-                    <Route path="register" element={<RegisterPage />} />
+                <Route path="/auth" element={<AuthLayout/>}>
+                    <Route index element={<Navigate to={Path.login} replace/>}/>
+                    <Route path="login" element={<LoginPage/>}/>
+                    <Route path="register" element={<RegisterPage/>}/>
                 </Route>
             </Route>
 
-            <Route element={<ProtectedRoute />}>
-                <Route element={<ModuleLayout />}>
-                    <Route path={Path.dashboard} element={<DashboardPage />} />
-                    <Route path={Path.settings} element={<div>Settings</div>} />
+            <Route element={<ProtectedRoute/>}>
+                <Route element={<ModuleLayout/>}>
+                    <Route path={Path.dashboard} element={<DashboardPage/>}/>
+                    <Route path={Path.authors} element={<AuthorsPage/>}/>
                 </Route>
             </Route>
 
-            <Route path="*" element={<NotFound />} />
+            <Route path="*" element={<NotFound/>}/>
         </Routes>
     );
 };
