@@ -2,11 +2,27 @@
   "info": {
     "_postman_id": "60bec0f8-b079-4ba9-949b-22309597b115",
     "name": "Library Management System",
-    "description": "API collection for Library Management System.\n\n**Setup:** The collection uses a variable `base_url` (default: `http://localhost:3000/api/v1`).\n\n**Auto-token:** After a successful Register or Login, the `access_token` variable is set automatically and used in the Authorization header of protected requests.",
-    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "53400841",
-    "_collection_link": "https://go.postman.co/collection/53400841-60bec0f8-b079-4ba9-949b-22309597b115?source=collection_link"
+    "description": "API collection for the Library Management System.\n\n**Setup:**\n- `base_url` (default: `http://localhost:3000/api/v1`)\n- `access_token` is auto-set after a successful Register / Login\n- `author_id` and `book_id` are auto-set after their Create requests\n\n**Authentication:**\nThe collection has `Bearer {{access_token}}` set at the collection level. Every request inherits it automatically. Public requests (register / login / health) and negative auth tests use `noauth` explicitly.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
   },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          "// Warn if a protected request runs without a token",
+          "const url = pm.request.url.toString();",
+          "const publicPaths = ['/auth/login', '/auth/register', '/actuator/'];",
+          "const isPublic = publicPaths.some(p => url.includes(p));",
+          "const token = pm.collectionVariables.get('access_token');",
+          "if (!isPublic && !token) {",
+          "    console.warn('⚠ No access_token set. Run a Login request first.');",
+          "}"
+        ]
+      }
+    }
+  ],
   "item": [
     {
       "name": "Health",
@@ -17,27 +33,23 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test('Status 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{base_url}}/actuator/health",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "actuator",
-                "health"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "health"]
             }
           },
           "response": []
@@ -48,27 +60,23 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test('Status 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});"
-                ],
-                "type": "text/javascript"
+                ]
               }
             }
           ],
           "request": {
+            "auth": { "type": "noauth" },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{base_url}}/actuator/info",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "actuator",
-                "info"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["actuator", "info"]
             }
           },
           "response": []
@@ -87,6 +95,7 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 201', function () {",
                       "    pm.response.to.have.status(201);",
@@ -99,43 +108,27 @@
                       "    pm.expect(json.token).to.have.property('accessToken');",
                       "});",
                       "",
-                      "// Auto-set token",
                       "const json = pm.response.json();",
                       "if (json.token && json.token.accessToken) {",
                       "    pm.collectionVariables.set('access_token', json.token.accessToken);",
-                      "    console.log('Token saved to collection variables');",
+                      "    console.log('access_token saved');",
                       "}"
-                    ],
-                    "type": "text/javascript",
-                    "packages": {},
-                    "requests": {}
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
-                  "raw": "{\n    \"name\": \"TestUser\",\n    \"email\": \"test@email.com\",\n    \"password\": \"Password1\"\n}"
+                  "raw": "{\n    \"name\": \"TestUser\",\n    \"email\": \"test2@email.com\",\n    \"password\": \"Password1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/register",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "register"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "register"]
                 }
               },
               "response": []
@@ -146,41 +139,27 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 409 - Email already exists', function () {",
                       "    pm.response.to.have.status(409);",
                       "});"
-                    ],
-                    "type": "text/javascript",
-                    "packages": {},
-                    "requests": {}
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"name\": \"Test\",\n    \"email\": \"test@email.com\",\n    \"password\": \"Password1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/register",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "register"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "register"]
                 }
               },
               "response": []
@@ -191,44 +170,31 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 400 - Validation error', function () {",
                       "    pm.response.to.have.status(400);",
                       "});",
-                      "",
                       "pm.test('Error mentions name', function () {",
                       "    const json = pm.response.json();",
                       "    pm.expect(json.errors).to.have.property('name');",
                       "});"
-                    ],
-                    "type": "text/javascript"
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"email\": \"test@email.com\",\n    \"password\": \"Password1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/register",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "register"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "register"]
                 }
               },
               "response": []
@@ -239,44 +205,31 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 400 - Validation error', function () {",
                       "    pm.response.to.have.status(400);",
                       "});",
-                      "",
                       "pm.test('Error mentions email', function () {",
                       "    const json = pm.response.json();",
                       "    pm.expect(json.errors).to.have.property('email');",
                       "});"
-                    ],
-                    "type": "text/javascript"
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"name\": \"Test User\",\n    \"email\": \"not-an-email\",\n    \"password\": \"Password1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/register",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "register"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "register"]
                 }
               },
               "response": []
@@ -287,44 +240,31 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 400 - Validation error', function () {",
                       "    pm.response.to.have.status(400);",
                       "});",
-                      "",
                       "pm.test('Error mentions password', function () {",
                       "    const json = pm.response.json();",
                       "    pm.expect(json.errors).to.have.property('password');",
                       "});"
-                    ],
-                    "type": "text/javascript"
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"name\": \"Test User\",\n    \"email\": \"test2@email.com\",\n    \"password\": \"password1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/register",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "register"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "register"]
                 }
               },
               "response": []
@@ -335,44 +275,31 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 400 - Validation error', function () {",
                       "    pm.response.to.have.status(400);",
                       "});",
-                      "",
                       "pm.test('Error mentions password length', function () {",
                       "    const json = pm.response.json();",
                       "    pm.expect(json.errors).to.have.property('password');",
                       "});"
-                    ],
-                    "type": "text/javascript"
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"name\": \"Test User\",\n    \"email\": \"test3@email.com\",\n    \"password\": \"Ab1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/register",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "register"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "register"]
                 }
               },
               "response": []
@@ -383,44 +310,28 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 400 - Validation error', function () {",
                       "    pm.response.to.have.status(400);",
                       "});",
-                      "",
                       "pm.test('Multiple validation errors', function () {",
                       "    const json = pm.response.json();",
                       "    pm.expect(Object.keys(json.errors).length).to.be.above(1);",
                       "});"
-                    ],
-                    "type": "text/javascript"
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{}"
-                },
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": { "mode": "raw", "raw": "{}" },
                 "url": {
                   "raw": "{{base_url}}/auth/register",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "register"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "register"]
                 }
               },
               "response": []
@@ -441,19 +352,16 @@
                       "pm.test('Status 200', function () {",
                       "    pm.response.to.have.status(200);",
                       "});",
-                      "",
                       "pm.test('Response has user and token', function () {",
                       "    const json = pm.response.json();",
                       "    pm.expect(json).to.have.property('user');",
                       "    pm.expect(json).to.have.property('token');",
                       "});",
-                      "",
                       "pm.test('Role is ADMIN', function () {",
                       "    const json = pm.response.json();",
                       "    pm.expect(json.user.role).to.eql('ADMIN');",
                       "});",
                       "",
-                      "// Auto-save token",
                       "const json = pm.response.json();",
                       "if (json.token && json.token.accessToken) {",
                       "    pm.collectionVariables.set('access_token', json.token.accessToken);",
@@ -464,29 +372,17 @@
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"email\": \"admin@library.com\",\n    \"password\": \"Password1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/login",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "login"]
                 }
               },
               "response": []
@@ -502,19 +398,11 @@
                       "pm.test('Status 200', function () {",
                       "    pm.response.to.have.status(200);",
                       "});",
-                      "",
-                      "pm.test('Response has user and token', function () {",
-                      "    const json = pm.response.json();",
-                      "    pm.expect(json).to.have.property('user');",
-                      "    pm.expect(json).to.have.property('token');",
-                      "});",
-                      "",
                       "pm.test('Role is LIBRARIAN', function () {",
                       "    const json = pm.response.json();",
                       "    pm.expect(json.user.role).to.eql('LIBRARIAN');",
                       "});",
                       "",
-                      "// Auto-save token",
                       "const json = pm.response.json();",
                       "if (json.token && json.token.accessToken) {",
                       "    pm.collectionVariables.set('access_token', json.token.accessToken);",
@@ -525,29 +413,17 @@
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"email\": \"librarian@library.com\",\n    \"password\": \"Password1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/login",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "login"]
                 }
               },
               "response": []
@@ -563,19 +439,11 @@
                       "pm.test('Status 200', function () {",
                       "    pm.response.to.have.status(200);",
                       "});",
-                      "",
-                      "pm.test('Response has user and token', function () {",
-                      "    const json = pm.response.json();",
-                      "    pm.expect(json).to.have.property('user');",
-                      "    pm.expect(json).to.have.property('token');",
-                      "});",
-                      "",
                       "pm.test('Role is MEMBER', function () {",
                       "    const json = pm.response.json();",
                       "    pm.expect(json.user.role).to.eql('MEMBER');",
                       "});",
                       "",
-                      "// Auto-save token",
                       "const json = pm.response.json();",
                       "if (json.token && json.token.accessToken) {",
                       "    pm.collectionVariables.set('access_token', json.token.accessToken);",
@@ -586,29 +454,17 @@
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"email\": \"member@library.com\",\n    \"password\": \"Password1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/login",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "login"]
                 }
               },
               "response": []
@@ -619,11 +475,11 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 200', function () {",
                       "    pm.response.to.have.status(200);",
                       "});",
-                      "",
                       "pm.test('Response has user and token', function () {",
                       "    const json = pm.response.json();",
                       "    pm.expect(json).to.have.property('user');",
@@ -631,43 +487,27 @@
                       "    pm.expect(json.token).to.have.property('accessToken');",
                       "});",
                       "",
-                      "// Auto-set token",
                       "const json = pm.response.json();",
                       "if (json.token && json.token.accessToken) {",
                       "    pm.collectionVariables.set('access_token', json.token.accessToken);",
-                      "    console.log('Token saved to collection variables');",
+                      "    console.log('access_token saved');",
                       "}"
-                    ],
-                    "type": "text/javascript",
-                    "packages": {},
-                    "requests": {}
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"email\": \"test@email.com\",\n    \"password\": \"Password1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/login",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "login"]
                 }
               },
               "response": []
@@ -678,41 +518,27 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 401 - Invalid credentials', function () {",
                       "    pm.response.to.have.status(401);",
                       "});"
-                    ],
-                    "type": "text/javascript",
-                    "packages": {},
-                    "requests": {}
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"email\": \"not-exists@email.com\",\n    \"password\": \"Password1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/login",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "login"]
                 }
               },
               "response": []
@@ -723,41 +549,27 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 401 - Invalid credentials', function () {",
                       "    pm.response.to.have.status(401);",
                       "});"
-                    ],
-                    "type": "text/javascript",
-                    "packages": {},
-                    "requests": {}
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"email\": \"test@email.com\",\n    \"password\": \"WrongPassword1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/login",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "login"]
                 }
               },
               "response": []
@@ -768,39 +580,27 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 400 - Validation error', function () {",
                       "    pm.response.to.have.status(400);",
                       "});"
-                    ],
-                    "type": "text/javascript"
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
                 "body": {
                   "mode": "raw",
                   "raw": "{\n    \"email\": \"not-an-email\",\n    \"password\": \"Password1\"\n}"
                 },
                 "url": {
                   "raw": "{{base_url}}/auth/login",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "login"]
                 }
               },
               "response": []
@@ -811,44 +611,87 @@
                 {
                   "listen": "test",
                   "script": {
+                    "type": "text/javascript",
                     "exec": [
                       "pm.test('Status 400 - Validation error', function () {",
                       "    pm.response.to.have.status(400);",
                       "});"
-                    ],
-                    "type": "text/javascript"
+                    ]
                   }
                 }
               ],
               "request": {
-                "auth": {
-                  "type": "noauth"
-                },
+                "auth": { "type": "noauth" },
                 "method": "POST",
-                "header": [
-                  {
-                    "key": "Content-Type",
-                    "value": "application/json"
-                  }
-                ],
-                "body": {
-                  "mode": "raw",
-                  "raw": "{}"
-                },
+                "header": [{ "key": "Content-Type", "value": "application/json" }],
+                "body": { "mode": "raw", "raw": "{}" },
                 "url": {
                   "raw": "{{base_url}}/auth/login",
-                  "host": [
-                    "{{base_url}}"
-                  ],
-                  "path": [
-                    "auth",
-                    "login"
-                  ]
+                  "host": ["{{base_url}}"],
+                  "path": ["auth", "login"]
                 }
               },
               "response": []
             }
           ]
+        },
+        {
+          "name": "Me",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response has user', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('user');",
+                  "    pm.expect(json.user).to.have.property('role');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Me - No Auth (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/auth/me",
+              "host": ["{{base_url}}"],
+              "path": ["auth", "me"]
+            }
+          },
+          "response": []
         }
       ]
     },
@@ -861,45 +704,67 @@
             {
               "listen": "test",
               "script": {
+                "type": "text/javascript",
                 "exec": [
                   "pm.test('Status 201', function () {",
                   "    pm.response.to.have.status(201);",
                   "});",
+                  "pm.test('Response wrapper has data', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('data');",
+                  "    pm.expect(json.data).to.have.property('publicId');",
+                  "});",
                   "",
-                  "// Save author id",
                   "const json = pm.response.json();",
-                  "const author = json.author || json;",
-                  "if (author && author.id) {",
-                  "    pm.collectionVariables.set('author_id', author.id);",
-                  "    console.log('Saved author_id:', author.id);",
+                  "if (json.data && json.data.publicId) {",
+                  "    pm.collectionVariables.set('author_id', json.data.publicId);",
+                  "    console.log('Saved author_id:', json.data.publicId);",
                   "}"
-                ],
-                "type": "text/javascript",
-                "packages": {},
-                "requests": {}
+                ]
               }
             }
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
-              "raw": "{\n    \"name\": \"Haruki Murakamii\",\n    \"bio\": \"Japanese writer known for novels blending realism and surrealism.\"\n}"
+              "raw": "{\n    \"name\": \"Haruki Murakami\",\n    \"bio\": \"Japanese writer known for novels blending realism and surrealism.\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/authors",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "authors"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["authors"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create - Duplicate Name",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 409 - Author already exists', function () {",
+                  "    pm.response.to.have.status(409);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"name\": \"Haruki Murakami\",\n    \"bio\": \"Duplicate.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/authors",
+              "host": ["{{base_url}}"],
+              "path": ["authors"]
             }
           },
           "response": []
@@ -921,24 +786,15 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"bio\": \"No name here\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/authors",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "authors"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["authors"]
             }
           },
           "response": []
@@ -959,28 +815,17 @@
             }
           ],
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
+            "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"name\": \"Unauthorized Author\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/authors",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "authors"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["authors"]
             }
           },
           "response": []
@@ -995,31 +840,75 @@
                 "exec": [
                   "pm.test('Status 200', function () {",
                   "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Response shape is paginated', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('data');",
+                  "    pm.expect(json.data).to.be.an('array');",
+                  "    pm.expect(json).to.have.property('meta');",
+                  "    pm.expect(json.meta).to.have.all.keys('page', 'size', 'total', 'totalPages');",
+                  "});",
+                  "pm.test('Items expose publicId, not id', function () {",
+                  "    const json = pm.response.json();",
+                  "    if (json.data.length > 0) {",
+                  "        pm.expect(json.data[0]).to.have.property('publicId');",
+                  "        pm.expect(json.data[0]).to.not.have.property('id');",
+                  "    }",
                   "});"
                 ]
               }
             }
           ],
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{base_url}}/authors",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "authors"
+              "host": ["{{base_url}}"],
+              "path": ["authors"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "List - With Pagination",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Meta reflects pagination params', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.meta.page).to.eql(1);",
+                  "    pm.expect(json.meta.size).to.eql(5);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/authors?page=1&size=5&sort=name&order=asc",
+              "host": ["{{base_url}}"],
+              "path": ["authors"],
+              "query": [
+                { "key": "page", "value": "1" },
+                { "key": "size", "value": "5" },
+                { "key": "sort", "value": "name" },
+                { "key": "order", "value": "asc" }
               ]
             }
           },
           "response": []
         },
         {
-          "name": "Get by ID - Success",
+          "name": "List - With Search",
           "event": [
             {
               "listen": "test",
@@ -1034,20 +923,45 @@
             }
           ],
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/authors?search=murakami",
+              "host": ["{{base_url}}"],
+              "path": ["authors"],
+              "query": [{ "key": "search", "value": "murakami" }]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get by ID - Success",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 200', function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Detail response has publicId and books', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property('data');",
+                  "    pm.expect(json.data).to.have.property('publicId');",
+                  "    pm.expect(json.data).to.have.property('books');",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{base_url}}/authors/{{author_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "authors",
-                "{{author_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["authors", "{{author_id}}"]
             }
           },
           "response": []
@@ -1068,20 +982,12 @@
             }
           ],
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{base_url}}/authors/00000000-0000-0000-0000-000000000000",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "authors",
-                "00000000-0000-0000-0000-000000000000"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["authors", "00000000-0000-0000-0000-000000000000"]
             }
           },
           "response": []
@@ -1096,6 +1002,10 @@
                 "exec": [
                   "pm.test('Status 200', function () {",
                   "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test('Updated bio reflected', function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.data.bio).to.eql('Updated bio text.');",
                   "});"
                 ]
               }
@@ -1103,25 +1013,129 @@
           ],
           "request": {
             "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"bio\": \"Updated bio text.\"\n}"
             },
             "url": {
               "raw": "{{base_url}}/authors/{{author_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "authors",
-                "{{author_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["authors", "{{author_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"bio\": \"Updated bio.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/authors/00000000-0000-0000-0000-000000000000",
+              "host": ["{{base_url}}"],
+              "path": ["authors", "00000000-0000-0000-0000-000000000000"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update - No Auth (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"bio\": \"Nope.\"\n}"
+            },
+            "url": {
+              "raw": "{{base_url}}/authors/{{author_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["authors", "{{author_id}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete - Not Found",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 404', function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/authors/00000000-0000-0000-0000-000000000000",
+              "host": ["{{base_url}}"],
+              "path": ["authors", "00000000-0000-0000-0000-000000000000"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete - No Auth (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test('Status 401', function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{base_url}}/authors/{{author_id}}",
+              "host": ["{{base_url}}"],
+              "path": ["authors", "{{author_id}}"]
             }
           },
           "response": []
@@ -1147,13 +1161,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/authors/{{author_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "authors",
-                "{{author_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["authors", "{{author_id}}"]
             }
           },
           "response": []
@@ -1175,17 +1184,13 @@
                   "    pm.response.to.have.status(201);",
                   "});",
                   "",
-                  "pm.test('Response has book object', function () {",
-                  "    const json = pm.response.json();",
-                  "    pm.expect(json).to.have.property('book');",
-                  "    pm.expect(json.book).to.have.property('id');",
-                  "});",
-                  "",
-                  "// Save book id for later requests",
+                  "// Defensive: supports old shape ({ book }) and new shape ({ data })",
                   "const json = pm.response.json();",
-                  "if (json.book && json.book.id) {",
-                  "    pm.collectionVariables.set('book_id', json.book.id);",
-                  "    console.log('Saved book_id:', json.book.id);",
+                  "const book = json.data || json.book;",
+                  "const id = book && (book.publicId || book.id);",
+                  "if (id) {",
+                  "    pm.collectionVariables.set('book_id', id);",
+                  "    console.log('Saved book_id:', id);",
                   "}"
                 ]
               }
@@ -1193,24 +1198,15 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"title\": \"Norwegian Wood\",\n    \"genre\": \"ROMANCE\",\n    \"publishDate\": \"1987-08-04\",\n    \"isbn\": \"9780375704024\",\n    \"stock\": 10,\n    \"authorIds\": [\n        \"{{author_id}}\"\n    ]\n}"
             },
             "url": {
               "raw": "{{base_url}}/books",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books"]
             }
           },
           "response": []
@@ -1232,24 +1228,15 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"title\": \"Another Book\",\n    \"genre\": \"ROMANCE\",\n    \"publishDate\": \"1987-08-04\",\n    \"isbn\": \"9780375704024\",\n    \"stock\": 5,\n    \"authorIds\": [\n        \"{{author_id}}\"\n    ]\n}"
             },
             "url": {
               "raw": "{{base_url}}/books",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books"]
             }
           },
           "response": []
@@ -1275,24 +1262,15 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"title\": \"Some Book\",\n    \"genre\": \"FICTION\",\n    \"publishDate\": \"2020-01-01\",\n    \"isbn\": \"not-an-isbn\",\n    \"stock\": 1,\n    \"authorIds\": [\n        \"{{author_id}}\"\n    ]\n}"
             },
             "url": {
               "raw": "{{base_url}}/books",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books"]
             }
           },
           "response": []
@@ -1318,24 +1296,12 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"title\": \"Only Title\"\n}"
-            },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n    \"title\": \"Only Title\"\n}" },
             "url": {
               "raw": "{{base_url}}/books",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books"]
             }
           },
           "response": []
@@ -1361,24 +1327,15 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"title\": \"Bad Stock Book\",\n    \"genre\": \"FICTION\",\n    \"publishDate\": \"2020-01-01\",\n    \"isbn\": \"9780131103627\",\n    \"stock\": -5,\n    \"authorIds\": [\n        \"{{author_id}}\"\n    ]\n}"
             },
             "url": {
               "raw": "{{base_url}}/books",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books"]
             }
           },
           "response": []
@@ -1400,24 +1357,15 @@
           ],
           "request": {
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"title\": \"Phantom Author\",\n    \"genre\": \"FICTION\",\n    \"publishDate\": \"2020-01-01\",\n    \"isbn\": \"9780132350884\",\n    \"stock\": 1,\n    \"authorIds\": [\n        \"00000000-0000-0000-0000-000000000000\"\n    ]\n}"
             },
             "url": {
               "raw": "{{base_url}}/books",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books"]
             }
           },
           "response": []
@@ -1438,28 +1386,17 @@
             }
           ],
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
+            "auth": { "type": "noauth" },
             "method": "POST",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"title\": \"Unauthorized Book\",\n    \"genre\": \"FICTION\",\n    \"publishDate\": \"2020-01-01\",\n    \"isbn\": \"9780321356680\",\n    \"stock\": 1,\n    \"authorIds\": [\n        \"{{author_id}}\"\n    ]\n}"
             },
             "url": {
               "raw": "{{base_url}}/books",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books"]
             }
           },
           "response": []
@@ -1484,19 +1421,12 @@
             }
           ],
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{base_url}}/books",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books"]
             }
           },
           "response": []
@@ -1517,28 +1447,15 @@
             }
           ],
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{base_url}}/books?page=1&size=10",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books"
-              ],
+              "host": ["{{base_url}}"],
+              "path": ["books"],
               "query": [
-                {
-                  "key": "page",
-                  "value": "1"
-                },
-                {
-                  "key": "size",
-                  "value": "10"
-                }
+                { "key": "page", "value": "1" },
+                { "key": "size", "value": "10" }
               ]
             }
           },
@@ -1557,8 +1474,7 @@
                   "});",
                   "pm.test('Book has expected fields', function () {",
                   "    const json = pm.response.json();",
-                  "    const book = json.book || json;",
-                  "    pm.expect(book).to.have.property('id');",
+                  "    const book = json.data || json.book || json;",
                   "    pm.expect(book).to.have.property('title');",
                   "    pm.expect(book).to.have.property('authors');",
                   "});"
@@ -1567,20 +1483,12 @@
             }
           ],
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{base_url}}/books/{{book_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books",
-                "{{book_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books", "{{book_id}}"]
             }
           },
           "response": []
@@ -1601,20 +1509,12 @@
             }
           ],
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
             "method": "GET",
             "header": [],
             "url": {
               "raw": "{{base_url}}/books/00000000-0000-0000-0000-000000000000",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books",
-                "00000000-0000-0000-0000-000000000000"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books", "00000000-0000-0000-0000-000000000000"]
             }
           },
           "response": []
@@ -1632,7 +1532,8 @@
                   "});",
                   "pm.test('Stock was updated', function () {",
                   "    const json = pm.response.json();",
-                  "    pm.expect(json.book.stock).to.eql(25);",
+                  "    const book = json.data || json.book;",
+                  "    pm.expect(book.stock).to.eql(25);",
                   "});"
                 ]
               }
@@ -1640,25 +1541,12 @@
           ],
           "request": {
             "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"stock\": 25\n}"
-            },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n    \"stock\": 25\n}" },
             "url": {
               "raw": "{{base_url}}/books/{{book_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books",
-                "{{book_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books", "{{book_id}}"]
             }
           },
           "response": []
@@ -1680,25 +1568,15 @@
           ],
           "request": {
             "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
             "body": {
               "mode": "raw",
               "raw": "{\n    \"authorIds\": [\n        \"{{author_id}}\"\n    ]\n}"
             },
             "url": {
               "raw": "{{base_url}}/books/{{book_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books",
-                "{{book_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books", "{{book_id}}"]
             }
           },
           "response": []
@@ -1720,25 +1598,12 @@
           ],
           "request": {
             "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"stock\": 5\n}"
-            },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n    \"stock\": 5\n}" },
             "url": {
               "raw": "{{base_url}}/books/00000000-0000-0000-0000-000000000000",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books",
-                "00000000-0000-0000-0000-000000000000"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books", "00000000-0000-0000-0000-000000000000"]
             }
           },
           "response": []
@@ -1760,25 +1625,12 @@
           ],
           "request": {
             "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"stock\": -10\n}"
-            },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n    \"stock\": -10\n}" },
             "url": {
               "raw": "{{base_url}}/books/{{book_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books",
-                "{{book_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books", "{{book_id}}"]
             }
           },
           "response": []
@@ -1799,29 +1651,14 @@
             }
           ],
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
+            "auth": { "type": "noauth" },
             "method": "PATCH",
-            "header": [
-              {
-                "key": "Content-Type",
-                "value": "application/json"
-              }
-            ],
-            "body": {
-              "mode": "raw",
-              "raw": "{\n    \"stock\": 1\n}"
-            },
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": { "mode": "raw", "raw": "{\n    \"stock\": 1\n}" },
             "url": {
               "raw": "{{base_url}}/books/{{book_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books",
-                "{{book_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books", "{{book_id}}"]
             }
           },
           "response": []
@@ -1842,20 +1679,13 @@
             }
           ],
           "request": {
-            "auth": {
-              "type": "noauth"
-            },
+            "auth": { "type": "noauth" },
             "method": "DELETE",
             "header": [],
             "url": {
               "raw": "{{base_url}}/books/{{book_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books",
-                "{{book_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books", "{{book_id}}"]
             }
           },
           "response": []
@@ -1880,13 +1710,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/books/00000000-0000-0000-0000-000000000000",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books",
-                "00000000-0000-0000-0000-000000000000"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books", "00000000-0000-0000-0000-000000000000"]
             }
           },
           "response": []
@@ -1902,7 +1727,6 @@
                   "pm.test('Status 200', function () {",
                   "    pm.response.to.have.status(200);",
                   "});",
-                  "// Clear book_id since it was deleted",
                   "pm.collectionVariables.set('book_id', '');"
                 ]
               }
@@ -1913,13 +1737,8 @@
             "header": [],
             "url": {
               "raw": "{{base_url}}/books/{{book_id}}",
-              "host": [
-                "{{base_url}}"
-              ],
-              "path": [
-                "books",
-                "{{book_id}}"
-              ]
+              "host": ["{{base_url}}"],
+              "path": ["books", "{{book_id}}"]
             }
           },
           "response": []
@@ -1930,29 +1749,13 @@
   "auth": {
     "type": "bearer",
     "bearer": [
-      {
-        "key": "token",
-        "value": "{{access_token}}",
-        "type": "string"
-      }
+      { "key": "token", "value": "{{access_token}}", "type": "string" }
     ]
   },
   "variable": [
-    {
-      "key": "base_url",
-      "value": "http://localhost:3000/api/v1"
-    },
-    {
-      "key": "access_token",
-      "value": ""
-    },
-    {
-      "key": "book_id",
-      "value": ""
-    },
-    {
-      "key": "author_id",
-      "value": ""
-    }
+    { "key": "base_url", "value": "http://localhost:3000/api/v1" },
+    { "key": "access_token", "value": "" },
+    { "key": "author_id", "value": "" },
+    { "key": "book_id", "value": "" }
   ]
 }

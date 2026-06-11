@@ -8,12 +8,12 @@ export const createAuthor = async (req, res, next) => {
         const result = await authorService.createAuthor(authorData);
         res.status(201).json({
             message: "Author created successfully",
-            author: result,
+            data: result,
         });
     } catch (error) {
         next(error);
     }
-}
+};
 
 export const updateAuthor = async (req, res, next) => {
     try {
@@ -22,12 +22,12 @@ export const updateAuthor = async (req, res, next) => {
         const result = await authorService.updateAuthor(id, authorData);
         res.status(200).json({
             message: "Author updated successfully",
-            author: result,
+            data: result,
         });
     } catch (error) {
         next(error);
     }
-}
+};
 
 export const deleteAuthor = async (req, res, next) => {
     try {
@@ -35,12 +35,12 @@ export const deleteAuthor = async (req, res, next) => {
         const result = await authorService.deleteAuthor(id);
         res.status(200).json({
             message: "Author deleted successfully",
-            author: result,
+            data: result,
         });
     } catch (error) {
         next(error);
     }
-}
+};
 
 export const getAllAuthors = async (req, res, next) => {
     try {
@@ -51,10 +51,7 @@ export const getAllAuthors = async (req, res, next) => {
             order: req.query.order,
             search: req.query.search,
         });
-        res.status(200).json({
-            message: "Authors found successfully",
-            author: result,
-        });
+        res.status(200).json(result);
     } catch (error) {
         next(error);
     }
@@ -65,11 +62,10 @@ export const getAuthorByPublicId = async (req, res, next) => {
         const {id} = req.params;
         const result = await authorService.getAuthorByPublicId(id);
         res.status(200).json({
-            message: "Author by publicId list successfully",
-            author: result,
-        })
-
+            message: "Author found successfully",
+            data: result,
+        });
     } catch (error) {
         next(error);
     }
-}
+};

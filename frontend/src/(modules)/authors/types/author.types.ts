@@ -11,6 +11,17 @@ export type AuthorResponse = {
     publicId: UUID;
     name: string;
     bio: string | null;
+    createdAt: string;
+    updatedAt: string;
+};
+
+export type AuthorBookSummary = {
+    publicId: UUID;
+    title: string;
+};
+
+export type AuthorDetailResponse = AuthorResponse & {
+    books: AuthorBookSummary[];
 };
 
 export type AuthorsResponse = PaginatedResponse<AuthorResponse>;
