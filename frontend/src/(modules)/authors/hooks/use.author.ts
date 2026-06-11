@@ -1,60 +1,77 @@
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { AuthorService } from "@/src/(modules)/authors/service/author.service.ts";
-import type {
-    AuthorResponse,
-    AuthorsResponse,
-} from "@/src/(modules)/authors/types/author.types.ts";
+import type {AuthorResponse, AuthorsResponse} from "@/src/(modules)/authors/types/author.types.ts";
 import type { PaginationQuery } from "@/src/lib/types/api.types.ts";
-import type { UUID } from "@/src/lib/types/uuid.types.ts";
+import type {UUID} from "@/src/lib/types/uuid.types.ts";
 
-export function useAuthor() {
+export function useAuthors(initialParams?: PaginationQuery) {
     const [authors, setAuthors] = useState<AuthorsResponse | null>(null);
+    const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<Error | null>(null);
+
+    const fetchAuthors = useCallback(async (params?: PaginationQuery): Promise<void> => {
+        setLoading(true);
+        setError(null);
+        try {
+            const data = await AuthorService.getAuthors(params);
+            setAuthors(data);
+        } catch (e) {
+            setError(e instanceof Error ? e : new Error("Failed to fetch authors"));
+        } finally {
+            setLoading(false);
+        }
+    }, []);
+
+    useEffect(() => {
+        let cancelled = false;
+
+        (async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const data = await AuthorService.getAuthors(initialParams);
+                if (!cancelled) setAuthors(data);
+            } catch (e) {
+                if (!cancelled) {
+                    setError(e instanceof Error ? e : new Error("Failed to fetch authors"));
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        })();
+
+        return () => { cancelled = true; };
+    }, [initialParams]);
+
+    return { authors, loading, error, fetchAuthors };
+}
+
+export function useAuthor(publicId: UUID | null) {
     const [author, setAuthor] = useState<AuthorResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
-    const refreshAuthors = useCallback(async (params?: PaginationQuery) => {
-        setLoading(true);
-        setError(null);
+    useEffect(() => {
+        if (!publicId) return;
+        let cancelled = false;
 
-        try {
-            const data = await AuthorService.getAuthors(params);
-            setAuthors(data);
-        } catch (error) {
-            setError(
-                error instanceof Error
-                    ? error
-                    : new Error("Error getting data from Author API"),
-            );
-        } finally {
-            setLoading(false);
-        }
-    }, []);
+        (async () => {
+            setLoading(true);
+            setError(null);
+            try {
+                const data = await AuthorService.getAuthorByPublicId(publicId);
+                if (!cancelled) setAuthor(data);
+            } catch (e) {
+                if (!cancelled) {
+                    setError(e instanceof Error ? e : new Error("Failed to fetch author"));
+                }
+            } finally {
+                if (!cancelled) setLoading(false);
+            }
+        })();
 
-    const refreshAuthorByPublicId = useCallback(async (publicId: UUID) => {
-        setLoading(true);
-        setError(null);
+        return () => { cancelled = true; };
+    }, [publicId]);
 
-        try {
-            const data = await AuthorService.getAuthorByPublicId(publicId);
-            setAuthor(data);
-        } catch (error) {
-            setError(
-                error instanceof Error
-                    ? error
-                    : new Error("Error getting data from Author API"),
-            );
-        } finally {
-            setLoading(false);
-        }
-    }, []);
-
-    return {
-        authors,
-        author,
-        loading,
-        error,
-        refreshAuthors,
-        refreshAuthorByPublicId,
-    };
+    return { author, loading, error };
 }
