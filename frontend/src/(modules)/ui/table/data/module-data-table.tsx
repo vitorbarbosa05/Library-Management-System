@@ -19,7 +19,6 @@ import {Spinner} from "@/src/components/ui/spinner";
 import type {UUID} from "@/src/lib/types/uuid.types";
 import {getPaginationItems} from "./pagination-utils";
 import {NavLink} from "react-router";
-import {Path} from "@/src/router/paths.ts";
 
 export interface RowActionsProps<TData> {
     id: UUID;
@@ -55,6 +54,8 @@ export interface DataTableProps<TData> {
 
     searchPlaceholder?: string;
     emptyMessage?: string;
+    buttonPath?: string;
+    buttonText?: string;
     filtersContent?: React.ReactNode;
     RowActionsComponent?: React.ComponentType<RowActionsProps<TData>>;
     onRowDeleted?: (id: UUID) => void;
@@ -79,6 +80,8 @@ export function ModuleDataTable<TData>({
                                            errorMessage,
                                            searchPlaceholder = "Search...",
                                            emptyMessage = "No results found.",
+                                           buttonPath,
+                                           buttonText = "Add new ...",
                                            filtersContent,
                                            RowActionsComponent,
                                            onRowDeleted,
@@ -128,11 +131,11 @@ export function ModuleDataTable<TData>({
                     {filtersContent}
                 </div>
 
-                <NavLink to={Path.newAuthor}>
-                    <Button>
-                        Add new Author
+                {buttonPath ? (
+                    <Button asChild>
+                        <NavLink to={buttonPath}>{buttonText}</NavLink>
                     </Button>
-                </NavLink>
+                ) : null}
             </div>
 
             {errorMessage ? (
