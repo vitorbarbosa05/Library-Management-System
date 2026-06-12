@@ -1,10 +1,11 @@
 import {useColumnsAuthors} from "@/src/(modules)/ui/table/columns/column-author.tsx";
 import {useServerDataTable} from "@/src/(modules)/ui/table/data/use-server-data-table.ts";
 import {ModuleDataTable} from "@/src/(modules)/ui/table/data/module-data-table.tsx";
-import {AuthorRowActions} from "@/src/(modules)/authors/ui/components/author-row-actions.tsx";
+import {AuthorRowActions} from "@/src/(modules)/ui/table/row/author-row-actions.tsx";
 
 import {useAuthors} from "@/src/(modules)/authors/hooks/use.author.ts";
 import type {AuthorResponse} from "@/src/(modules)/authors/types/author.types.ts";
+import {Path} from "@/src/router/paths.ts";
 
 const AuthorsContent = () => {
     const tableState = useServerDataTable({ initialPageSize: 10 });
@@ -22,8 +23,10 @@ const AuthorsContent = () => {
                 isLoading={loading && !authors}
                 isFetching={loading}
                 errorMessage={error?.message}
-                searchPlaceholder="Search by author name or bio..."
+                searchPlaceholder="Search by author name..."
                 emptyMessage="No authors found."
+                buttonPath={Path.newAuthor}
+                buttonText="Create new author"
                 RowActionsComponent={AuthorRowActions}
                 onRowDeleted={() => fetchAuthors(tableState.query)}
                 onRowUpdated={() => fetchAuthors(tableState.query)}
