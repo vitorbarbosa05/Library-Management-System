@@ -23,7 +23,7 @@ const AuthorsContent = () => {
                 isLoading={loading && !authors}
                 isFetching={loading}
                 errorMessage={error?.message}
-                searchPlaceholder="Search by author name or bio..."
+                searchPlaceholder="Search by author name..."
                 emptyMessage="No authors found."
                 buttonPath={Path.newAuthor}
                 buttonText="Create new author"
