@@ -1,4 +1,4 @@
-import {beforeEach, describe, expect, it, vi} from "vitest";
+import { beforeEach, describe, expect, it, vi } from "vitest";
 import * as authorService from "../../../../../src/modules/author/service/author.service.js";
 import * as authorController from "../../../../../src/modules/author/controller/author.controller.js";
 
@@ -24,15 +24,15 @@ function mockResponse() {
     return res;
 }
 
-describe("Auth controller createAuthor", () => {
+describe("Author controller createAuthor", () => {
     beforeEach(() => vi.clearAllMocks());
 
     it("should respond 201 with the created author", async () => {
-        const req = {body: {name: "Murakami", bio: "Writer"}};
+        const req = { body: { name: "Murakami", bio: "Writer" } };
         const res = mockResponse();
         const next = vi.fn();
 
-        const fakeResult = {id: "uuid-123", name: "Murakami", bio: "Writer"};
+        const fakeResult = { publicId: "uuid-123", name: "Murakami", bio: "Writer" };
         authorService.createAuthor.mockResolvedValue(fakeResult);
 
         await authorController.createAuthor(req, res, next);
@@ -44,13 +44,13 @@ describe("Auth controller createAuthor", () => {
         expect(res.status).toHaveBeenCalledWith(201);
         expect(res.json).toHaveBeenCalledWith({
             message: "Author created successfully",
-            author: fakeResult,
+            data: fakeResult,
         });
         expect(next).not.toHaveBeenCalled();
     });
 
     it("should call next(error) when the service throws", async () => {
-        const req = {body: {name: "Murakami"}};
+        const req = { body: { name: "Murakami" } };
         const res = mockResponse();
         const next = vi.fn();
 
@@ -64,7 +64,7 @@ describe("Auth controller createAuthor", () => {
     });
 });
 
-describe("Auth controller updateAuthor", () => {
+describe("Author controller updateAuthor", () => {
     beforeEach(() => vi.clearAllMocks());
 
     it("should respond 200 with the updated author", async () => {
@@ -72,13 +72,17 @@ describe("Auth controller updateAuthor", () => {
         const res = mockResponse();
         const next = vi.fn();
 
-        const fakeResult = { id: "uuid-123", bio: "New bio" };
+        const fakeResult = { publicId: "uuid-123", bio: "New bio" };
         authorService.updateAuthor.mockResolvedValue(fakeResult);
 
         await authorController.updateAuthor(req, res, next);
 
         expect(authorService.updateAuthor).toHaveBeenCalledWith("uuid-123", { bio: "New bio" });
         expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Author updated successfully",
+            data: fakeResult,
+        });
         expect(next).not.toHaveBeenCalled();
     });
 
@@ -96,7 +100,7 @@ describe("Auth controller updateAuthor", () => {
     });
 });
 
-describe("Auth controller deleteAuthor", () => {
+describe("Author controller deleteAuthor", () => {
     beforeEach(() => vi.clearAllMocks());
 
     it("should respond 200 when deleted", async () => {
@@ -104,12 +108,17 @@ describe("Auth controller deleteAuthor", () => {
         const res = mockResponse();
         const next = vi.fn();
 
-        authorService.deleteAuthor.mockResolvedValue({ id: "uuid-123" });
+        const fakeResult = { publicId: "uuid-123" };
+        authorService.deleteAuthor.mockResolvedValue(fakeResult);
 
         await authorController.deleteAuthor(req, res, next);
 
         expect(authorService.deleteAuthor).toHaveBeenCalledWith("uuid-123");
         expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith({
+            message: "Author deleted successfully",
+            data: fakeResult,
+        });
     });
 
     it("should call next(error) when service throws", async () => {
@@ -126,7 +135,7 @@ describe("Auth controller deleteAuthor", () => {
     });
 });
 
-describe("Auth controller getAuthorByPublicId", () => {
+describe("Author controller getAuthorByPublicId", () => {
     beforeEach(() => vi.clearAllMocks());
 
     it("should respond 200 with the author", async () => {
@@ -134,7 +143,7 @@ describe("Auth controller getAuthorByPublicId", () => {
         const res = mockResponse();
         const next = vi.fn();
 
-        const fakeResult = { id: "uuid-123", name: "Murakami" };
+        const fakeResult = { publicId: "uuid-123", name: "Murakami" };
         authorService.getAuthorByPublicId.mockResolvedValue(fakeResult);
 
         await authorController.getAuthorByPublicId(req, res, next);
@@ -142,8 +151,8 @@ describe("Auth controller getAuthorByPublicId", () => {
         expect(authorService.getAuthorByPublicId).toHaveBeenCalledWith("uuid-123");
         expect(res.status).toHaveBeenCalledWith(200);
         expect(res.json).toHaveBeenCalledWith({
-            message: "Author by publicId list successfully",
-            author: fakeResult,
+            message: "Author found successfully",
+            data: fakeResult,
         });
     });
 
@@ -161,17 +170,21 @@ describe("Auth controller getAuthorByPublicId", () => {
     });
 });
 
-describe("Auth controller getAllAuthors", () => {
+describe("Author controller getAllAuthors", () => {
     beforeEach(() => vi.clearAllMocks());
 
-    it("should pass query params to the service", async () => {
+    it("should pass query params to the service and return paginated result directly", async () => {
         const req = {
             query: { page: "2", size: "5", sort: "name", order: "desc", search: "mura" },
         };
         const res = mockResponse();
         const next = vi.fn();
 
-        authorService.getAllAuthors.mockResolvedValue({ data: [], meta: {} });
+        const fakeResult = {
+            data: [{ publicId: "uuid-1", name: "Murakami" }],
+            meta: { page: 2, size: 5, total: 1, totalPages: 1 },
+        };
+        authorService.getAllAuthors.mockResolvedValue(fakeResult);
 
         await authorController.getAllAuthors(req, res, next);
 
@@ -183,5 +196,19 @@ describe("Auth controller getAllAuthors", () => {
             search: "mura",
         });
         expect(res.status).toHaveBeenCalledWith(200);
+        expect(res.json).toHaveBeenCalledWith(fakeResult);
+    });
+
+    it("should call next(error) when service throws", async () => {
+        const req = { query: {} };
+        const res = mockResponse();
+        const next = vi.fn();
+
+        const error = new Error("DB down");
+        authorService.getAllAuthors.mockRejectedValue(error);
+
+        await authorController.getAllAuthors(req, res, next);
+
+        expect(next).toHaveBeenCalledWith(error);
     });
 });
