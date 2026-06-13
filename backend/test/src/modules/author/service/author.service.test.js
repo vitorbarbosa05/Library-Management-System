@@ -5,7 +5,6 @@ import * as authorService from "../../../../../src/modules/author/service/author
 vi.mock("../../../../../prisma/prisma.client.js", () => ({
     default: {
         author: {
-            findFirst: vi.fn(),
             findUnique: vi.fn(),
             findMany: vi.fn(),
             create: vi.fn(),
@@ -20,6 +19,13 @@ vi.mock("../../../../../src/shared/logger/logger.js", () => ({
     logger: {info: vi.fn(), warn: vi.fn(), error: vi.fn()},
 }));
 
+// Helper to build Prisma-shaped errors
+function prismaError(code, message = "Prisma error") {
+    const err = new Error(message);
+    err.code = code;
+    return err;
+}
+
 const fakeAuthor = {
     id: 1,
     publicId: "uuid-123",
@@ -29,11 +35,19 @@ const fakeAuthor = {
     updatedAt: new Date(),
 };
 
-describe('POST /api/v1/author', () => {
+const fakeAuthorWithBooks = {
+    ...fakeAuthor,
+    books: [
+        {
+            book: {publicId: "book-uuid-1", title: "Norwegian Wood"},
+        },
+    ],
+};
+
+describe("POST /api/v1/author", () => {
     beforeEach(() => vi.clearAllMocks());
 
-    it("should create a author", async () => {
-        prisma.author.findFirst.mockResolvedValue(null);
+    it("should create an author", async () => {
         prisma.author.create.mockResolvedValue(fakeAuthor);
 
         const result = await authorService.createAuthor({
@@ -41,84 +55,100 @@ describe('POST /api/v1/author', () => {
             bio: "Japanese writer",
         });
 
-        expect(prisma.author.findFirst).toHaveBeenCalledWith({
-            where: {name: "Haruki Murakami"},
+        expect(prisma.author.create).toHaveBeenCalledWith({
+            data: {name: "Haruki Murakami", bio: "Japanese writer"},
         });
-        expect(prisma.author.create).toHaveBeenCalledOnce();
-        expect(result.id).toBe("uuid-123");
+        expect(result.publicId).toBe("uuid-123");
         expect(result.name).toBe("Haruki Murakami");
-    })
+    });
 
-    it("should throw 409 if author name already exists", async () => {
-        prisma.author.findFirst.mockResolvedValue(fakeAuthor);
+    it("should throw 409 when Prisma rejects with P2002 (duplicate name)", async () => {
+        prisma.author.create.mockRejectedValue(prismaError("P2002"));
 
-        await expect(authorService.createAuthor({name: "Haruki Murakami"}))
-            .rejects.toThrow("Author already exists");
+        await expect(
+            authorService.createAuthor({name: "Haruki Murakami"}),
+        ).rejects.toThrow("Author already exists");
+    });
 
-        expect(prisma.author.create).not.toHaveBeenCalled();
+    it("should re-throw unknown errors", async () => {
+        const unknown = new Error("connection lost");
+        prisma.author.create.mockRejectedValue(unknown);
+
+        await expect(
+            authorService.createAuthor({name: "Anyone"}),
+        ).rejects.toThrow("connection lost");
     });
 });
 
-describe('PATCH /api/v1/author/:id', () => {
+describe("PATCH /api/v1/author/:id", () => {
     beforeEach(() => vi.clearAllMocks());
 
     it("should update and return the DTO", async () => {
-        prisma.author.findUnique.mockResolvedValue(fakeAuthor);
-        prisma.author.update.mockResolvedValue({...fakeAuthor, bio: "Updated bio"});
+        prisma.author.update.mockResolvedValue({
+            ...fakeAuthor,
+            bio: "Updated bio",
+        });
 
-        const result = await authorService.updateAuthor("uuid-123", {bio: "Updated bio"});
+        const result = await authorService.updateAuthor("uuid-123", {
+            bio: "Updated bio",
+        });
 
         expect(prisma.author.update).toHaveBeenCalledOnce();
         expect(result.bio).toBe("Updated bio");
+        expect(result.publicId).toBe("uuid-123");
     });
 
     it("should only include provided fields in update data", async () => {
-        prisma.author.findUnique.mockResolvedValue(fakeAuthor);
         prisma.author.update.mockResolvedValue(fakeAuthor);
 
         await authorService.updateAuthor("uuid-123", {bio: "Only bio"});
 
         const updateArg = prisma.author.update.mock.calls[0][0];
         expect(updateArg.data).toEqual({bio: "Only bio"});
+        expect(updateArg.where).toEqual({publicId: "uuid-123"});
     });
 
-    it("should throw 404 when author not found", async () => {
-        prisma.author.findUnique.mockResolvedValue(null);
+    it("should throw 404 when Prisma rejects with P2025", async () => {
+        prisma.author.update.mockRejectedValue(prismaError("P2025"));
 
-        await expect(authorService.updateAuthor("missing-value", {bio: "none"}))
-            .rejects.toThrow("Author not found");
+        await expect(
+            authorService.updateAuthor("missing-value", {bio: "none"}),
+        ).rejects.toThrow("Author not found");
+    });
 
-        expect(prisma.author.update).not.toHaveBeenCalled();
+    it("should throw 409 when Prisma rejects with P2002 (duplicate name on update)", async () => {
+        prisma.author.update.mockRejectedValue(prismaError("P2002"));
+
+        await expect(
+            authorService.updateAuthor("uuid-123", {name: "Existing"}),
+        ).rejects.toThrow("Author name already exists");
     });
 });
 
-describe('DELETE /api/v1/author/:id', () => {
+describe("DELETE /api/v1/author/:id", () => {
     beforeEach(() => vi.clearAllMocks());
 
-    it("should delete a author", async () => {
-        prisma.author.findUnique.mockResolvedValue(fakeAuthor);
+    it("should delete an author", async () => {
         prisma.author.delete.mockResolvedValue(fakeAuthor);
 
         const result = await authorService.deleteAuthor("uuid-123");
 
         expect(prisma.author.delete).toHaveBeenCalledWith({
             where: {publicId: "uuid-123"},
-            include: {books: {include: {book: true}}},
         });
-        expect(result.id).toBe("uuid-123");
-    })
+        expect(result.publicId).toBe("uuid-123");
+    });
 
-    it("should throw 404 when author not found", async () => {
-        prisma.author.findUnique.mockResolvedValue(null);
+    it("should throw 404 when Prisma rejects with P2025", async () => {
+        prisma.author.delete.mockRejectedValue(prismaError("P2025"));
 
-        await expect(authorService.deleteAuthor("missing")
+        await expect(
+            authorService.deleteAuthor("missing"),
         ).rejects.toThrow("Author not found");
-
-        expect(prisma.author.delete).not.toHaveBeenCalled();
     });
 });
 
-describe('GET /api/v1/author/', () => {
+describe("GET /api/v1/author/", () => {
     beforeEach(() => vi.clearAllMocks());
 
     it("should return paginated data with meta", async () => {
@@ -128,11 +158,12 @@ describe('GET /api/v1/author/', () => {
         const result = await authorService.getAllAuthors({page: 1, size: 10});
 
         expect(result.data).toHaveLength(1);
+        expect(result.data[0].publicId).toBe("uuid-123");
         expect(result.meta).toEqual({
             page: 1,
             size: 10,
             total: 1,
-            totalPages: 1
+            totalPages: 1,
         });
     });
 
@@ -168,26 +199,33 @@ describe('GET /api/v1/author/', () => {
     });
 });
 
-describe('GET /api/v1/author/:id', () => {
+describe("GET /api/v1/author/:id", () => {
     beforeEach(() => vi.clearAllMocks());
 
-    it("should return the author", async () => {
-        prisma.author.findUnique.mockResolvedValue(fakeAuthor);
+    it("should return the author with books included", async () => {
+        prisma.author.findUnique.mockResolvedValue(fakeAuthorWithBooks);
 
         const result = await authorService.getAuthorByPublicId("uuid-123");
 
         expect(prisma.author.findUnique).toHaveBeenCalledWith({
             where: {publicId: "uuid-123"},
+            include: {books: {include: {book: true}}},
         });
-        expect(result.id).toBe("uuid-123");
-    })
+        expect(result.publicId).toBe("uuid-123");
+        expect(result.books).toHaveLength(1);
+        expect(result.books[0]).toEqual({
+            publicId: "book-uuid-1",
+            title: "Norwegian Wood",
+        });
+    });
 
     it("should throw 404 when author not found", async () => {
         prisma.author.findUnique.mockResolvedValue(null);
 
-        await expect(authorService.deleteAuthor("missing-value"))
-            .rejects.toThrow("Author not found");
+        await expect(
+            authorService.getAuthorByPublicId("missing-value"),
+        ).rejects.toThrow("Author not found");
 
-        expect(prisma.author.delete).not.toHaveBeenCalled();
+        expect(prisma.author.findUnique).toHaveBeenCalledOnce();
     });
 });
