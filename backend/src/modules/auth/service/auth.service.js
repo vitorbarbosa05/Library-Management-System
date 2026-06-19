@@ -5,7 +5,7 @@ import {AppError} from "../../../shared/errors/AppError.js";
 import {toAuthResponse} from "../dto/auth.response.dto.js";
 import {toUserResponse} from "../dto/user.response.dto.js";
 import {generateAccessToken} from "./token.service.js";
-
+import {hashEmail} from "../../../shared/utils/crypto.utils.js";
 
 export async function register(name, email, password) {
     const emailHash = hashEmail(email);
