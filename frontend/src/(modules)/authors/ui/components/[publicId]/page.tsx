@@ -1,11 +1,13 @@
 import {useParams} from "react-router";
+
 import type {UUID} from "@/src/lib/types/uuid.types";
-import ModuleWrapper from "@/src/components/shared/module-wrapper.tsx";
-import GoBack from "@/src/components/shared/go-back.tsx";
-import ModuleTitle from "@/src/components/shared/module-title.tsx";
-import {useAuthor} from "@/src/(modules)/authors/hooks/use.author.ts";
-import {Path} from "@/src/router/paths.ts";
-import {Spinner} from "@/src/components/ui/spinner.tsx";
+import ModuleWrapper from "@/src/components/shared/module-wrapper";
+import GoBack from "@/src/components/shared/go-back";
+import ModuleTitle from "@/src/components/shared/module-title";
+import {Spinner} from "@/src/components/ui/spinner";
+import {useAuthor} from "@/src/(modules)/authors/hooks/use.author";
+import {Path} from "@/src/router/paths";
+import AuthorBook from "@/src/(modules)/authors/ui/components/[publicId]/author-book";
 
 const AuthorPublicIdPage = () => {
     const {id} = useParams<{ id: string }>();
@@ -15,7 +17,7 @@ const AuthorPublicIdPage = () => {
         return (
             <ModuleWrapper>
                 <GoBack path={Path.authors} module="authors"/>
-                <div className="mx-auto flex h-screen items-center justify-center gap-2">
+                <div className="flex h-64 items-center justify-center gap-2">
                     <Spinner/>
                     <p>Loading...</p>
                 </div>
@@ -27,8 +29,10 @@ const AuthorPublicIdPage = () => {
         return (
             <ModuleWrapper>
                 <GoBack path={Path.authors} module="authors"/>
-                <div role="alert"
-                     className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-2 text-sm text-destructive">
+                <div
+                    role="alert"
+                    className="rounded-md border border-destructive/50 bg-destructive/10 px-4 py-2 text-sm text-destructive"
+                >
                     {error.message}
                 </div>
             </ModuleWrapper>
@@ -47,11 +51,35 @@ const AuthorPublicIdPage = () => {
     return (
         <ModuleWrapper>
             <GoBack path={Path.authors} module="authors"/>
-            <section>
+            <section className="space-y-6">
                 <ModuleTitle
-                    title={author.name ?? "No name provided."}
+                    title={author.name}
                     description={author.bio ?? "No bio provided."}
                 />
+
+                <div className="space-y-3">
+                    <h2 className="text-xl font-regular tracking-tighter">
+                        Books ({author.books.length})
+                    </h2>
+
+                    {author.books.length === 0 ? (
+                        <p className="text-sm text-muted-foreground">
+                            This author has no books yet.
+                        </p>
+                    ) : (
+                        <div className="flex flex-wrap items-stretch gap-3">
+                            {author.books.map((book) => (
+                                <AuthorBook
+                                    key={book.publicId}
+                                    title={book.title}
+                                    isbn={book.isbn}
+                                    publishDate={book.publishDate}
+                                    genre={book.genre}
+                                />
+                            ))}
+                        </div>
+                    )}
+                </div>
             </section>
         </ModuleWrapper>
     );
