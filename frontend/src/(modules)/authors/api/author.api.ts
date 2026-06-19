@@ -1,7 +1,8 @@
 import http from "@/src/lib/api-client";
 import type {UUID} from "@/src/lib/types/uuid.types.ts";
-import type {PaginationQuery} from "@/src/lib/types/api.types.ts";
+import type {ApiResponse, PaginationQuery} from "@/src/lib/types/api.types.ts";
 import type {
+    AuthorDetailResponse,
     AuthorResponse,
     AuthorsResponse,
     CreateAuthorRequest,
@@ -29,8 +30,8 @@ export const AuthorApi = {
         return data;
     },
 
-    getAuthorByPublicId: async (publicId: UUID): Promise<AuthorResponse> => {
-        const {data} = await http.get<AuthorResponse>(`/authors/${publicId}`);
-        return data;
+    getAuthorByPublicId: async (publicId: UUID): Promise<AuthorDetailResponse> => {
+        const {data} = await http.get<ApiResponse<AuthorDetailResponse>>(`/authors/${publicId}`,);
+        return data.data;
     },
 };
