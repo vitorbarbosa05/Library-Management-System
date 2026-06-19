@@ -18,6 +18,9 @@ export type AuthorResponse = {
 export type AuthorBookSummary = {
     publicId: UUID;
     title: string;
+    isbn: string;
+    publishDate: string;
+    genre: string;
 };
 
 export type AuthorDetailResponse = AuthorResponse & {

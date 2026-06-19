@@ -1,5 +1,6 @@
 import {AuthorApi} from "@/src/(modules)/authors/api/author.api.ts";
 import type {
+    AuthorDetailResponse,
     AuthorResponse,
     AuthorsResponse,
     CreateAuthorRequest,
@@ -25,7 +26,7 @@ export const AuthorService = {
         return AuthorApi.getAuthors(params);
     },
 
-    getAuthorByPublicId: async (publicId: UUID): Promise<AuthorResponse> => {
+    getAuthorByPublicId: async (publicId: UUID): Promise<AuthorDetailResponse> => {
         return AuthorApi.getAuthorByPublicId(publicId);
     },
 };

@@ -19,6 +19,9 @@ export function toAuthorDetailResponse(author) {
             author.books?.map(({ book }) => ({
                 publicId: book.publicId,
                 title: book.title,
+                isbn: book.isbn,
+                publishDate: book.publishDate,
+                genre: book.genre,
             })) ?? [],
     };
 }

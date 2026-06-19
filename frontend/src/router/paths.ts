@@ -18,6 +18,7 @@ export const Path = {
 
 
     authors: "/authors",
+    authorPublicId: "/authors/:id",
     newAuthor: "/authors/new",
 
     loans: "/loans",
