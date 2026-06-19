@@ -1,7 +1,16 @@
 import {useEffect, useMemo, useState} from "react";
-import type {SortingState} from "@tanstack/react-table";
+import type {RowData, SortingState} from "@tanstack/react-table";
 import {useDebounce} from "@/src/(modules)/ui/table/data/use-debounce.ts";
 import type {PaginationQuery} from "@/src/lib/types/api.types.ts";
+import type {UUID} from "@/src/lib/types/uuid.types.ts";
+
+declare module "@tanstack/react-table" {
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    interface TableMeta<TData extends RowData> {
+        onRowDeleted?: (id: UUID) => void;
+        onRowUpdated?: (id: UUID) => void;
+    }
+}
 
 export interface ServerDataTableQuery {
     page: number;
