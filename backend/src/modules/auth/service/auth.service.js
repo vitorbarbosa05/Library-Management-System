@@ -1,48 +1,19 @@
 import bcrypt from "bcryptjs";
-import jwt from "jsonwebtoken";
 import {logger} from "../../../shared/logger/logger.js";
 import prisma from "../../../../prisma/prisma.client.js";
 import {AppError} from "../../../shared/errors/AppError.js";
-import {hashEmail} from "../../../shared/utils/crypto.utils.js";
 import {toAuthResponse} from "../dto/auth.response.dto.js";
 import {toUserResponse} from "../dto/user.response.dto.js";
+import {generateAccessToken} from "./token.service.js";
 
-const SALT_ROUNDS = 12;
-const JWT_ISSUER = "library-backend";
-const JWT_AUDIENCE = "library-api";
-const JWT_ALGORITHM = "HS256"
-
-function getJwtSecret() {
-    const secret = process.env.JWT_ACCESS_SECRET;
-    if (!secret) {
-        throw new AppError("JWT configuration error", 500);
-    }
-    return secret;
-}
-
-function generateAccessToken(user) {
-    return jwt.sign({
-            role: user.role
-        },
-        getJwtSecret(),
-        {
-            subject: user.publicId,
-            issuer: JWT_ISSUER,
-            audience: JWT_AUDIENCE,
-            algorithm: JWT_ALGORITHM,
-            jwtid: crypto.randomUUID(),
-            expiresIn: process.env.JWT_EXPIRES_IN
-        }
-    );
-}
 
 export async function register(name, email, password) {
     const emailHash = hashEmail(email);
     const existingUser = await prisma.user.findUnique({where: {email}});
 
     if (existingUser) {
-        logger.warn({emailHash}, "Register blocked: email already exists");
-        throw new AppError("Email already exists", 409);
+        logger.warn({emailHash}, "Register blocked: user already exists");
+        throw new AppError("User already exists", 409);
     }
 
     const hashedPassword = await bcrypt.hash(password, SALT_ROUNDS);
@@ -65,7 +36,7 @@ export async function register(name, email, password) {
         throw error;
     }
 
-    logger.info({emailHash}, "Register success");
+    logger.info({publicId: user.publicId}, "Register success");
 
     const token = generateAccessToken(user);
 
@@ -83,11 +54,11 @@ export async function login(email, password) {
 
     const isPasswordMatch = await bcrypt.compare(password, existingUser.password);
     if (!isPasswordMatch) {
-        logger.warn({emailHash}, "Login failed: password mismatch");
+        logger.warn({publicId: existingUser.publicId}, "Login failed: password mismatch");
         throw new AppError("Invalid credentials", 401);
     }
 
-    logger.info({emailHash}, "Login success");
+    logger.info({publicId: existingUser.publicId}, "Login success");
 
     const token = generateAccessToken(existingUser);
 
@@ -98,7 +69,7 @@ export async function me(publicId) {
     const existingUser = await prisma.user.findUnique({where: {publicId}});
 
     if (!existingUser) {
-        logger.warn({publicId}, "User failed: user not found");
+        logger.warn({publicId}, "Me failed: user not found");
         throw new AppError("Authenticated user not found", 401);
     }
 
