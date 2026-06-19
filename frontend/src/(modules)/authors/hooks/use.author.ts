@@ -1,7 +1,7 @@
-import { useCallback, useEffect, useState } from "react";
-import { AuthorService } from "@/src/(modules)/authors/service/author.service.ts";
-import type {AuthorResponse, AuthorsResponse} from "@/src/(modules)/authors/types/author.types.ts";
-import type { PaginationQuery } from "@/src/lib/types/api.types.ts";
+import {useCallback, useEffect, useState} from "react";
+import {AuthorService} from "@/src/(modules)/authors/service/author.service.ts";
+import type {AuthorDetailResponse, AuthorsResponse} from "@/src/(modules)/authors/types/author.types.ts";
+import type {PaginationQuery} from "@/src/lib/types/api.types.ts";
 import type {UUID} from "@/src/lib/types/uuid.types.ts";
 
 export function useAuthors(initialParams?: PaginationQuery) {
@@ -40,14 +40,16 @@ export function useAuthors(initialParams?: PaginationQuery) {
             }
         })();
 
-        return () => { cancelled = true; };
+        return () => {
+            cancelled = true;
+        };
     }, [initialParams]);
 
-    return { authors, loading, error, fetchAuthors };
+    return {authors, loading, error, fetchAuthors};
 }
 
 export function useAuthor(publicId: UUID | null) {
-    const [author, setAuthor] = useState<AuthorResponse | null>(null);
+    const [author, setAuthor] = useState<AuthorDetailResponse | null>(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
 
@@ -70,8 +72,10 @@ export function useAuthor(publicId: UUID | null) {
             }
         })();
 
-        return () => { cancelled = true; };
+        return () => {
+            cancelled = true;
+        };
     }, [publicId]);
 
-    return { author, loading, error };
+    return {author, loading, error};
 }
