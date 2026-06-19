@@ -11,8 +11,6 @@ const AuthorPublicIdPage = () => {
     const {id} = useParams<{ id: string }>();
     const {author, loading, error} = useAuthor((id ?? null) as UUID | null);
 
-    console.log(author);
-
     if (loading) {
         return (
             <ModuleWrapper>
