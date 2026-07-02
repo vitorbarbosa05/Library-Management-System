@@ -52,10 +52,7 @@ export const getAllBooks = async (req, res, next) => {
             order: req.query.order,
             search: req.query.search,
         });
-        res.status(200).json({
-            message: "Books found successfully",
-            book: result,
-        });
+        res.status(200).json(result);
     } catch (error) {
         next(error);
     }
