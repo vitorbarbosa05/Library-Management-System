@@ -15,7 +15,8 @@ export const Path = {
 
     // FEATURES
     books: "/books",
-
+    publicPublicId: "/books/:id",
+    newBook: "/books/new",
 
     authors: "/authors",
     authorPublicId: "/authors/:id",
