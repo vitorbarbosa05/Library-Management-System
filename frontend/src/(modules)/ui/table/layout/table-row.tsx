@@ -1,7 +1,7 @@
 import type React from "react";
 
 interface Props {
-    getValue: string;
+    getValue: string | number;
     className?: string;
 }
 
