@@ -3,6 +3,7 @@ import type {BookResponse} from "@/src/(modules)/books/types/book.types";
 import {useServerDataTable} from "@/src/(modules)/ui/table/data/use-server-data-table";
 import {useColumnsBooks} from "@/src/(modules)/ui/table/columns/column-book";
 import {useBooks} from "@/src/(modules)/books/hooks/use.book";
+import {Path} from "@/src/router/paths.ts";
 
 const BooksContent = () => {
     const tableState = useServerDataTable({initialPageSize: 10});
@@ -22,7 +23,7 @@ const BooksContent = () => {
                 errorMessage={error?.message}
                 searchPlaceholder="Search by book title or ISBN..."
                 emptyMessage="No books found."
-                // buttonPath={Path.newBook}
+                buttonPath={Path.newBook}
                 buttonText="Create new Book"
                 onRowDeleted={() => fetchBooks(tableState.query)}
                 onRowUpdated={() => fetchBooks(tableState.query)}
