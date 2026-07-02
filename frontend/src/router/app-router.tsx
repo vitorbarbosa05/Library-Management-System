@@ -21,6 +21,7 @@ import AuthorCreatePage from "@/src/(modules)/authors/ui/components/author-creat
 import {Path} from "@/src/router/paths.ts";
 import AuthorPublicIdPage from "@/src/(modules)/authors/ui/components/[publicId]/page.tsx";
 import BooksPage from "@/src/(modules)/books/ui/page.tsx";
+import BookCreatePage from "@/src/(modules)/books/ui/components/book-create.tsx";
 
 const AppRouter = () => {
     return (
@@ -46,6 +47,7 @@ const AppRouter = () => {
                     <Route path={Path.authorPublicId} element={<AuthorPublicIdPage/>}/>
 
                     <Route path={Path.books} element={<BooksPage/>}/>
+                    <Route path={Path.newBook} element={<BookCreatePage/>}/>
                 </Route>
             </Route>
 
