@@ -1,7 +1,7 @@
 import {z} from "zod";
 
-const MAX_TITLE_LENGTH = 200;
-const MAX_STOCK = 1000;
+export const MAX_TITLE_LENGTH = 200;
+export const MAX_STOCK = 1000;
 
 const bookGenreEnum = z.enum([
     "FANTASY",
