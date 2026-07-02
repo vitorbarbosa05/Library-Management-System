@@ -29,7 +29,7 @@ const sidebarData = {
     features: [
         {
             label: "Books",
-            url: Path.dashboard,
+            url: Path.books,
             icon: BookIcon,
         },
         {
@@ -53,8 +53,8 @@ const sidebarData = {
     ],
 };
 
-const ModuleSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
-    const { info, loading, error } = useActuatorInfo();
+const ModuleSidebar = ({...props}: React.ComponentProps<typeof Sidebar>) => {
+    const {info, loading, error} = useActuatorInfo();
 
     return (
         <Sidebar variant="inset" collapsible="icon" {...props}>
@@ -65,7 +65,7 @@ const ModuleSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
                             <NavLink to={Path.dashboard}>
                                 <div className="flex items-center gap-2">
                                     <div className="flex aspect-square size-7 items-center justify-center rounded-lg">
-                                        <LibraryBigIcon size={16} />
+                                        <LibraryBigIcon size={16}/>
                                     </div>
                                     <div className="grid flex-1 text-left text-sm leading-tight">
                                         <span className="truncate font-semibold">
@@ -83,14 +83,14 @@ const ModuleSidebar = ({ ...props }: React.ComponentProps<typeof Sidebar>) => {
             </SidebarHeader>
 
             <SidebarContent>
-                <ModuleSidebarMenu title="Overview" items={sidebarData.overview} />
-                <ModuleSidebarMenu title="Features" items={sidebarData.features} />
-                <ModuleSidebarMenu title="System" items={sidebarData.system} />
+                <ModuleSidebarMenu title="Overview" items={sidebarData.overview}/>
+                <ModuleSidebarMenu title="Features" items={sidebarData.features}/>
+                <ModuleSidebarMenu title="System" items={sidebarData.system}/>
             </SidebarContent>
             <SidebarFooter>
-                <ModuleSidebarUser />
+                <ModuleSidebarUser/>
             </SidebarFooter>
-            <SidebarRail />
+            <SidebarRail/>
         </Sidebar>
     );
 };
